@@ -1,0 +1,161 @@
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[command:CAP isCapRequestEnable:true] Parameters:twitch.tv/commands twitch.tv/tags}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:Welcome, GLHF!}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:Your host is tmi.twitch.tv}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:This server is rather new}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:-}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:-}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:You are in a maze of twisty passages, all alike.}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[] Parameters:>}
+&{Tags:map[] Source:map[host:justinfan123456@justinfan123456.tmi.twitch.tv nick:justinfan123456] Command:map[channel:#xqc command:JOIN] Parameters:}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[channel:#xqc command:ROOMSTATE] Parameters:}
+&{Tags:map[] Source:map[host:justinfan123456.tmi.twitch.tv nick:] Command:map[] Parameters:justinfan123456}
+&{Tags:map[] Source:map[host:justinfan123456.tmi.twitch.tv nick:] Command:map[] Parameters:End of /NAMES list}
+&{Tags:map[badge-info:map[subscriber:3] badges:map[moments:1 subscriber:3]] Source:map[host:mr_zazza_@mr_zazza_.tmi.twitch.tv nick:mr_zazza_] Command:map[channel:#xqc command:PRIVMSG] Parameters:Pepega NOT PRETENDING}
+&{Tags:map[badge-info:<nil> badges:map[no_audio:1]] Source:map[host:loloabribus@loloabribus.tmi.twitch.tv nick:loloabribus] Command:map[channel:#xqc command:PRIVMSG] Parameters:its real}
+&{Tags:map[] Source:map[host:justinfan123456@justinfan123456.tmi.twitch.tv nick:justinfan123456] Command:map[channel:#illojuan command:JOIN] Parameters:}
+&{Tags:map[] Source:map[host:tmi.twitch.tv nick:] Command:map[channel:#illojuan command:ROOMSTATE] Parameters:}
+&{Tags:map[] Source:map[host:justinfan123456.tmi.twitch.tv nick:] Command:map[] Parameters:justinfan123456}
+&{Tags:map[] Source:map[host:justinfan123456.tmi.twitch.tv nick:] Command:map[] Parameters:End of /NAMES list}
+&{Tags:map[badge-info:map[subscriber:39] badges:map[moments:3 subscriber:36]] Source:map[host:clikplay@clikplay.tmi.twitch.tv nick:clikplay] Command:map[channel:#xqc command:PRIVMSG] Parameters:Its how it is dumbass}
+&{Tags:map[badge-info:map[subscriber:1] badges:map[moments:1 subscriber:0]] Source:map[host:dark_light1000@dark_light1000.tmi.twitch.tv nick:dark_light1000] Command:map[channel:#xqc command:PRIVMSG] Parameters:YOUTUBE NONCOPYRIGHT MUSIC BatChest BatChest BatChest}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:gedaef@gedaef.tmi.twitch.tv nick:gedaef] Command:map[channel:#illojuan command:PRIVMSG] Parameters:YA LO VIO FOLAGOH}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:xotic_vxprs@xotic_vxprs.tmi.twitch.tv nick:xotic_vxprs] Command:map[channel:#xqc command:PRIVMSG] Parameters:no its real}
+&{Tags:map[badge-info:<nil> badges:map[moments:2]] Source:map[host:canfranisback@canfranisback.tmi.twitch.tv nick:canfranisback] Command:map[channel:#xqc command:PRIVMSG] Parameters:its not @xQc}
+&{Tags:map[badge-info:map[subscriber:2] badges:map[moments:1 subscriber:2]] Source:map[host:sweatyfathuman@sweatyfathuman.tmi.twitch.tv nick:sweatyfathuman] Command:map[channel:#xqc command:PRIVMSG] Parameters:HowDoWeTellHim}
+&{Tags:map[badge-info:map[subscriber:50] badges:map[moments:2 subscriber:48]] Source:map[host:awakune@awakune.tmi.twitch.tv nick:awakune] Command:map[channel:#xqc command:PRIVMSG] Parameters:no its a oil rig}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:elann232@elann232.tmi.twitch.tv nick:elann232] Command:map[channel:#illojuan command:PRIVMSG] Parameters:muy guapo muchas gracias}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:someone_else321@someone_else321.tmi.twitch.tv nick:someone_else321] Command:map[channel:#xqc command:PRIVMSG] Parameters:BOOBA KHALIFA}
+&{Tags:map[badge-info:map[subscriber:19] badges:map[moments:4 subscriber:18]] Source:map[host:mynanisadopted@mynanisadopted.tmi.twitch.tv nick:mynanisadopted] Command:map[channel:#xqc command:PRIVMSG] Parameters:no its the sze}
+&{Tags:map[badge-info:map[subscriber:10] badges:map[moments:1 subscriber:9]] Source:map[host:dege_98@dege_98.tmi.twitch.tv nick:dege_98] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:8] badges:map[glitchcon2020:1 subscriber:6]] Source:map[host:miguel9008@miguel9008.tmi.twitch.tv nick:miguel9008] Command:map[channel:#illojuan command:PRIVMSG] Parameters:jajajajajajajs}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:leastfingies@leastfingies.tmi.twitch.tv nick:leastfingies] Command:map[channel:#xqc command:PRIVMSG] Parameters:Listening}
+&{Tags:map[badge-info:<nil> badges:map[moments:2]] Source:map[host:testing12322@testing12322.tmi.twitch.tv nick:testing12322] Command:map[channel:#xqc command:PRIVMSG] Parameters:Its an OIL RIG ON WATER}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:reluk99@reluk99.tmi.twitch.tv nick:reluk99] Command:map[channel:#xqc command:PRIVMSG] Parameters:NO ITS OIL PLATFORM}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:sletos@sletos.tmi.twitch.tv nick:sletos] Command:map[channel:#xqc command:PRIVMSG] Parameters:NO ITS REAL}
+&{Tags:map[badge-info:<nil> badges:map[bits:1000]] Source:map[host:deoster_@deoster_.tmi.twitch.tv nick:deoster_] Command:map[channel:#xqc command:PRIVMSG] Parameters:TrollAware ..}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:twitchnad@twitchnad.tmi.twitch.tv nick:twitchnad] Command:map[channel:#xqc command:PRIVMSG] Parameters:BRO YOU THOUGHT EIFFEL TOWER WAS UNDER WATER?????}
+&{Tags:map[badge-info:map[subscriber:10] badges:map[subscriber:9]] Source:map[host:pr0m1ster@pr0m1ster.tmi.twitch.tv nick:pr0m1ster] Command:map[channel:#illojuan command:PRIVMSG] Parameters:WAYTOODANK}
+&{Tags:map[badge-info:map[subscriber:26] badges:map[moments:5 subscriber:2024]] Source:map[host:opuc@opuc.tmi.twitch.tv nick:opuc] Command:map[channel:#xqc command:PRIVMSG] Parameters:uuh}
+&{Tags:map[badge-info:map[subscriber:1] badges:map[subscriber:0]] Source:map[host:hahasori@hahasori.tmi.twitch.tv nick:hahasori] Command:map[channel:#xqc command:PRIVMSG] Parameters:Aware}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:arlyneu@arlyneu.tmi.twitch.tv nick:arlyneu] Command:map[channel:#xqc command:PRIVMSG] Parameters:noo they put it in the water what do you mean??? @xQc}
+&{Tags:map[badge-info:map[subscriber:7] badges:map[moments:3 subscriber:6]] Source:map[host:achuu1111@achuu1111.tmi.twitch.tv nick:achuu1111] Command:map[channel:#xqc command:PRIVMSG] Parameters:holy shit omE}
+&{Tags:map[badge-info:map[subscriber:22] badges:map[moments:3 subscriber:18]] Source:map[host:jeremiahb23@jeremiahb23.tmi.twitch.tv nick:jeremiahb23] Command:map[channel:#xqc command:PRIVMSG] Parameters:no it wasnt lol}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:ivnnx@ivnnx.tmi.twitch.tv nick:ivnnx] Command:map[channel:#illojuan command:PRIVMSG] Parameters:D:}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:zombi_boni@zombi_boni.tmi.twitch.tv nick:zombi_boni] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:27] badges:map[bits:5000 subscriber:24]] Source:map[host:ekinuu@ekinuu.tmi.twitch.tv nick:ekinuu] Command:map[channel:#xqc command:PRIVMSG] Parameters:monkeyListening 󠀀}
+&{Tags:map[badge-info:map[subscriber:20] badges:map[sub-gifter:10 subscriber:18]] Source:map[host:fariseola@fariseola.tmi.twitch.tv nick:fariseola] Command:map[channel:#illojuan command:PRIVMSG] Parameters:quE}
+&{Tags:map[badge-info:map[subscriber:20] badges:map[premium:1 subscriber:18]] Source:map[host:ivorca_22@ivorca_22.tmi.twitch.tv nick:ivorca_22] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK 󠀀}
+&{Tags:map[badge-info:map[subscriber:27] badges:map[moments:2 subscriber:24]] Source:map[host:savianns@savianns.tmi.twitch.tv nick:savianns] Command:map[channel:#xqc command:PRIVMSG] Parameters:its an oil platform}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:dr_tlmk@dr_tlmk.tmi.twitch.tv nick:dr_tlmk] Command:map[channel:#xqc command:PRIVMSG] Parameters:monkaW DEEPER}
+&{Tags:map[badge-info:<nil> badges:map[no_audio:1]] Source:map[host:smowuw@smowuw.tmi.twitch.tv nick:smowuw] Command:map[channel:#xqc command:PRIVMSG] Parameters:!#showemote idIot}
+&{Tags:map[badge-info:map[subscriber:5] badges:map[glitchcon2020:1 subscriber:3]] Source:map[host:mrsky1995@mrsky1995.tmi.twitch.tv nick:mrsky1995] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:fanaticodelosensual123@fanaticodelosensual123.tmi.twitch.tv nick:fanaticodelosensual123] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:finnaboeuf@finnaboeuf.tmi.twitch.tv nick:finnaboeuf] Command:map[channel:#xqc command:PRIVMSG] Parameters:nah that bitch is down there underwater}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:sharpshagger@sharpshagger.tmi.twitch.tv nick:sharpshagger] Command:map[channel:#xqc command:PRIVMSG] Parameters:its underwater}
+&{Tags:map[badge-info:map[subscriber:37] badges:map[moments:6 subscriber:36]] Source:map[host:envisionrush@envisionrush.tmi.twitch.tv nick:envisionrush] Command:map[channel:#xqc command:PRIVMSG] Parameters:Pepega Clap}
+&{Tags:map[badge-info:map[subscriber:9] badges:map[glitchcon2020:1 subscriber:9]] Source:map[host:rev133@rev133.tmi.twitch.tv nick:rev133] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:16] badges:map[moments:2 subscriber:12]] Source:map[host:mastondzn@mastondzn.tmi.twitch.tv nick:mastondzn] Command:map[channel:#xqc command:PRIVMSG] Parameters:it wasnt}
+&{Tags:map[badge-info:map[subscriber:8] badges:map[moments:1 subscriber:6]] Source:map[host:dampedchip@dampedchip.tmi.twitch.tv nick:dampedchip] Command:map[channel:#xqc command:PRIVMSG] Parameters:there r some in the ocean tho}
+&{Tags:map[badge-info:map[subscriber:5] badges:map[subscriber:3]] Source:map[host:epiclyepic5@epiclyepic5.tmi.twitch.tv nick:epiclyepic5] Command:map[channel:#xqc command:PRIVMSG] Parameters:xqcL OUR DUMBASS JUICELORD}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:gurkensoh@gurkensoh.tmi.twitch.tv nick:gurkensoh] Command:map[channel:#xqc command:PRIVMSG] Parameters:its an oil platform..}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:ultimateswim@ultimateswim.tmi.twitch.tv nick:ultimateswim] Command:map[channel:#xqc command:PRIVMSG] Parameters:It wasnt}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:long_dong_liam@long_dong_liam.tmi.twitch.tv nick:long_dong_liam] Command:map[channel:#xqc command:PRIVMSG] Parameters:no}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:driz000@driz000.tmi.twitch.tv nick:driz000] Command:map[channel:#xqc command:PRIVMSG] Parameters:autistic.}
+&{Tags:map[badge-info:<nil> badges:map[moments:2]] Source:map[host:holdthedoor283@holdthedoor283.tmi.twitch.tv nick:holdthedoor283] Command:map[channel:#xqc command:PRIVMSG] Parameters:Yep they built the Eiffel tower underwater lmaooo}
+&{Tags:map[badge-info:map[subscriber:20] badges:map[no_audio:1 subscriber:18]] Source:map[host:goddyeah@goddyeah.tmi.twitch.tv nick:goddyeah] Command:map[channel:#xqc command:PRIVMSG] Parameters:they built th eiffel tower underwater PogU}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:icykid@icykid.tmi.twitch.tv nick:icykid] Command:map[channel:#xqc command:PRIVMSG] Parameters:"im a genius chat"}
+&{Tags:map[badge-info:map[subscriber:9] badges:map[moments:1 subscriber:9]] Source:map[host:hugebicepsts@hugebicepsts.tmi.twitch.tv nick:hugebicepsts] Command:map[channel:#xqc command:PRIVMSG] Parameters:and a MaN}
+&{Tags:map[badge-info:<nil> badges:map[superultracombo-2023:1]] Source:map[host:juicednimbus@juicednimbus.tmi.twitch.tv nick:juicednimbus] Command:map[channel:#xqc command:PRIVMSG] Parameters:I am a genius TrollDespair 󠀀}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:heavensrevelation@heavensrevelation.tmi.twitch.tv nick:heavensrevelation] Command:map[channel:#xqc command:PRIVMSG] Parameters:Pepega actual moron 󠀀}
+&{Tags:map[badge-info:<nil> badges:map[moments:5]] Source:map[host:spelingerorr@spelingerorr.tmi.twitch.tv nick:spelingerorr] Command:map[channel:#xqc command:PRIVMSG] Parameters:PJSugar}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:rickeur@rickeur.tmi.twitch.tv nick:rickeur] Command:map[channel:#xqc command:PRIVMSG] Parameters:Pepega}
+&{Tags:map[badge-info:map[subscriber:3] badges:map[moments:4 subscriber:3]] Source:map[host:sachim_@sachim_.tmi.twitch.tv nick:sachim_] Command:map[channel:#xqc command:PRIVMSG] Parameters:BUT THEY DO IT}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:flue__@flue__.tmi.twitch.tv nick:flue__] Command:map[channel:#xqc command:PRIVMSG] Parameters:are you fucking stupid??}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:kagune02@kagune02.tmi.twitch.tv nick:kagune02] Command:map[channel:#xqc command:PRIVMSG] Parameters:it said oil platform}
+&{Tags:map[badge-info:<nil> badges:map[superultracombo-2023:1]] Source:map[host:sparduhh@sparduhh.tmi.twitch.tv nick:sparduhh] Command:map[channel:#xqc command:PRIVMSG] Parameters:omE ur dumb ass fuck}
+&{Tags:map[badge-info:map[subscriber:6] badges:map[subscriber:6]] Source:map[host:erickhestrada0@erickhestrada0.tmi.twitch.tv nick:erickhestrada0] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:austin1296@austin1296.tmi.twitch.tv nick:austin1296] Command:map[channel:#xqc command:PRIVMSG] Parameters:that is in the water}
+&{Tags:map[badge-info:map[subscriber:34] badges:map[bits:1000 subscriber:30]] Source:map[host:gamingguerilla771@gamingguerilla771.tmi.twitch.tv nick:gamingguerilla771] Command:map[channel:#xqc command:PRIVMSG] Parameters:NO IT'S OFFSHORE OIL RIG Okay NO IT'S OFFSHORE OIL RIG Okay NO IT'S OFFSHORE OIL RIG Okay NO IT'S OFFSHORE OIL RIG Okay NO IT'S OFFSHORE OIL RIG Okay NO IT'S OFFSHORE OIL RIG Okay}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:trexcharms@trexcharms.tmi.twitch.tv nick:trexcharms] Command:map[channel:#xqc command:PRIVMSG] Parameters:I thought you were a genius}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:talsedd@talsedd.tmi.twitch.tv nick:talsedd] Command:map[channel:#xqc command:PRIVMSG] Parameters:ITS REAL}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:unpurged@unpurged.tmi.twitch.tv nick:unpurged] Command:map[channel:#xqc command:PRIVMSG] Parameters:LOOOOOOOOOOL}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:kinga_00000@kinga_00000.tmi.twitch.tv nick:kinga_00000] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:nucelusive1@nucelusive1.tmi.twitch.tv nick:nucelusive1] Command:map[channel:#xqc command:PRIVMSG] Parameters:is that atlantis?!}
+&{Tags:map[badge-info:map[subscriber:21] badges:map[chatter-cs-go-2022:1 subscriber:18]] Source:map[host:francoss@francoss.tmi.twitch.tv nick:francoss] Command:map[channel:#illojuan command:PRIVMSG] Parameters:WAYTOODANK}
+&{Tags:map[badge-info:map[subscriber:8] badges:map[glitchcon2020:1 subscriber:6]] Source:map[host:juancarlosbodoque@juancarlosbodoque.tmi.twitch.tv nick:juancarlosbodoque] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK 󠀀}
+&{Tags:map[badge-info:map[subscriber:28] badges:map[moments:4 subscriber:24]] Source:map[host:turbo_clown@turbo_clown.tmi.twitch.tv nick:turbo_clown] Command:map[channel:#xqc command:PRIVMSG] Parameters:Pepega  NO ITS NOT}
+&{Tags:map[badge-info:map[subscriber:47] badges:map[moments:2 subscriber:42]] Source:map[host:thelumina7@thelumina7.tmi.twitch.tv nick:thelumina7] Command:map[channel:#xqc command:PRIVMSG] Parameters:no}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:sevrys@sevrys.tmi.twitch.tv nick:sevrys] Command:map[channel:#xqc command:PRIVMSG] Parameters:no its an oil platform its really there}
+&{Tags:map[badge-info:map[subscriber:20] badges:map[no_audio:1 subscriber:18]] Source:map[host:koribakusutaxd@koribakusutaxd.tmi.twitch.tv nick:koribakusutaxd] Command:map[channel:#xqc command:PRIVMSG] Parameters:no}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:nightmare_12287@nightmare_12287.tmi.twitch.tv nick:nightmare_12287] Command:map[channel:#xqc command:PRIVMSG] Parameters:Yo}
+&{Tags:map[badge-info:map[subscriber:5] badges:map[no_audio:1 subscriber:3]] Source:map[host:xm4rtinez@xm4rtinez.tmi.twitch.tv nick:xm4rtinez] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK 󠀀}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:vaseapearja@vaseapearja.tmi.twitch.tv nick:vaseapearja] Command:map[channel:#xqc command:PRIVMSG] Parameters:THERE ARE OIL}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:dave_zee@dave_zee.tmi.twitch.tv nick:dave_zee] Command:map[channel:#xqc command:PRIVMSG] Parameters:no its real and underwater}
+&{Tags:map[badge-info:map[subscriber:34] badges:map[moments:5 subscriber:30]] Source:map[host:zerosv@zerosv.tmi.twitch.tv nick:zerosv] Command:map[channel:#xqc command:PRIVMSG] Parameters:so dumb}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:dragginmynutzonurface@dragginmynutzonurface.tmi.twitch.tv nick:dragginmynutzonurface] Command:map[channel:#xqc command:PRIVMSG] Parameters:its in water}
+&{Tags:map[badge-info:map[subscriber:13] badges:map[moments:1 subscriber:12]] Source:map[host:nicoferarg@nicoferarg.tmi.twitch.tv nick:nicoferarg] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:17] badges:map[chatter-cs-go-2022:1 subscriber:12]] Source:map[host:raider3303@raider3303.tmi.twitch.tv nick:raider3303] Command:map[channel:#illojuan command:PRIVMSG] Parameters:AJDHKAJSHASD}
+&{Tags:map[badge-info:map[subscriber:28] badges:map[premium:1 subscriber:24]] Source:map[host:gyrosan__@gyrosan__.tmi.twitch.tv nick:gyrosan__] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK 󠀀}
+&{Tags:map[badge-info:map[subscriber:10] badges:map[premium:1 subscriber:9]] Source:map[host:seybot64@seybot64.tmi.twitch.tv nick:seybot64] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:14] badges:map[moments:1 subscriber:12]] Source:map[host:showob@showob.tmi.twitch.tv nick:showob] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:iansebasxd@iansebasxd.tmi.twitch.tv nick:iansebasxd] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:alex_illustration@alex_illustration.tmi.twitch.tv nick:alex_illustration] Command:map[channel:#illojuan command:PRIVMSG] Parameters:JAJDKFSDHGKFSHG}
+&{Tags:map[badge-info:map[subscriber:6] badges:map[subscriber:6]] Source:map[host:liinksz_@liinksz_.tmi.twitch.tv nick:liinksz_] Command:map[channel:#illojuan command:PRIVMSG] Parameters:facts}
+&{Tags:map[badge-info:<nil> badges:map[glitchcon2020:1]] Source:map[host:riskcol_con_sombrero@riskcol_con_sombrero.tmi.twitch.tv nick:riskcol_con_sombrero] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEKW}
+&{Tags:map[badge-info:map[subscriber:52] badges:map[moments:5 subscriber:48 vip:1]] Source:map[host:trestos3@trestos3.tmi.twitch.tv nick:trestos3] Command:map[channel:#xqc command:PRIVMSG] Parameters:not this one}
+&{Tags:map[badge-info:map[subscriber:10] badges:map[glitchcon2020:1 subscriber:9]] Source:map[host:naylill@naylill.tmi.twitch.tv nick:naylill] Command:map[channel:#illojuan command:PRIVMSG] Parameters:JAJSJAJAJAJAJJSJSJAJSJS}
+&{Tags:map[badge-info:<nil> badges:map[no_video:1]] Source:map[host:piazulnewperson@piazulnewperson.tmi.twitch.tv nick:piazulnewperson] Command:map[channel:#illojuan command:PRIVMSG] Parameters:D:}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:zaykolas@zaykolas.tmi.twitch.tv nick:zaykolas] Command:map[channel:#illojuan command:PRIVMSG] Parameters:mu guapo}
+&{Tags:map[badge-info:<nil> badges:map[moments:2]] Source:map[host:alberd_@alberd_.tmi.twitch.tv nick:alberd_] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:49] badges:map[moderator:1 subscriber:48 twitchconEU2022:1]] Source:map[host:am8rosio@am8rosio.tmi.twitch.tv nick:am8rosio] Command:map[channel:#illojuan command:PRIVMSG] Parameters:kekº}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:f3r_lv72@f3r_lv72.tmi.twitch.tv nick:f3r_lv72] Command:map[channel:#illojuan command:PRIVMSG] Parameters:real}
+&{Tags:map[badge-info:map[subscriber:6] badges:map[subscriber:6]] Source:map[host:justkoreh@justkoreh.tmi.twitch.tv nick:justkoreh] Command:map[channel:#illojuan command:PRIVMSG] Parameters:ASGLKJAGLSKJGA KEK}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:mezcladin@mezcladin.tmi.twitch.tv nick:mezcladin] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:14] badges:map[subscriber:12]] Source:map[host:bellabxxty@bellabxxty.tmi.twitch.tv nick:bellabxxty] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:damian288@damian288.tmi.twitch.tv nick:damian288] Command:map[channel:#illojuan command:PRIVMSG] Parameters:LUL}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:dumbria@dumbria.tmi.twitch.tv nick:dumbria] Command:map[channel:#illojuan command:PRIVMSG] Parameters:NPC}
+&{Tags:map[badge-info:map[subscriber:24] badges:map[hype-train:2 subscriber:24 vip:1]] Source:map[host:scorpyl2@scorpyl2.tmi.twitch.tv nick:scorpyl2] Command:map[channel:#xqc command:PRIVMSG] Parameters:didnt you say you were a genius}
+&{Tags:map[badge-info:map[subscriber:29] badges:map[glitchcon2020:1 subscriber:24]] Source:map[host:kukino31@kukino31.tmi.twitch.tv nick:kukino31] Command:map[channel:#illojuan command:PRIVMSG] Parameters:LMFAO 󠀀}
+&{Tags:map[badge-info:map[subscriber:31] badges:map[moments:1 subscriber:24]] Source:map[host:el_emiii@el_emiii.tmi.twitch.tv nick:el_emiii] Command:map[channel:#illojuan command:PRIVMSG] Parameters:PERO QUE QUIERES QUE HAGA PEREIRA}
+&{Tags:map[badge-info:map[subscriber:22] badges:map[subscriber:18 superultracombo-2023:1]] Source:map[host:takamikan1@takamikan1.tmi.twitch.tv nick:takamikan1] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:mrgreenpoison@mrgreenpoison.tmi.twitch.tv nick:mrgreenpoison] Command:map[channel:#illojuan command:PRIVMSG] Parameters:LMFAO}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:soft_connor@soft_connor.tmi.twitch.tv nick:soft_connor] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[no_audio:1]] Source:map[host:hachininini@hachininini.tmi.twitch.tv nick:hachininini] Command:map[channel:#illojuan command:PRIVMSG] Parameters:D:}
+&{Tags:map[badge-info:map[subscriber:31] badges:map[bits:1000 subscriber:24]] Source:map[host:santiespain@santiespain.tmi.twitch.tv nick:santiespain] Command:map[channel:#illojuan command:PRIVMSG] Parameters:WAYTOODANK Clap}
+&{Tags:map[badge-info:map[subscriber:11] badges:map[moments:1 subscriber:9]] Source:map[host:celestra28@celestra28.tmi.twitch.tv nick:celestra28] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:pedrosanchezcabronazo@pedrosanchezcabronazo.tmi.twitch.tv nick:pedrosanchezcabronazo] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:walalo1358@walalo1358.tmi.twitch.tv nick:walalo1358] Command:map[channel:#illojuan command:PRIVMSG] Parameters:JSAKJSAFHJ}
+&{Tags:map[badge-info:map[subscriber:11] badges:map[no_audio:1 subscriber:9]] Source:map[host:pierosc@pierosc.tmi.twitch.tv nick:pierosc] Command:map[channel:#illojuan command:PRIVMSG] Parameters:"peleando"}
+&{Tags:map[badge-info:map[subscriber:11] badges:map[premium:1 subscriber:9]] Source:map[host:vykai_@vykai_.tmi.twitch.tv nick:vykai_] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:10] badges:map[subscriber:9]] Source:map[host:pr0m1ster@pr0m1ster.tmi.twitch.tv nick:pr0m1ster] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:guillep18@guillep18.tmi.twitch.tv nick:guillep18] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:5] badges:map[moments:1 subscriber:3]] Source:map[host:castell_015@castell_015.tmi.twitch.tv nick:castell_015] Command:map[channel:#illojuan command:PRIVMSG] Parameters:WAYTOODANK}
+&{Tags:map[badge-info:map[subscriber:49] badges:map[moderator:1 subscriber:48 twitchconEU2022:1]] Source:map[host:am8rosio@am8rosio.tmi.twitch.tv nick:am8rosio] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:juanfe_714@juanfe_714.tmi.twitch.tv nick:juanfe_714] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:1] badges:map[subscriber:0]] Source:map[host:atrelluu@atrelluu.tmi.twitch.tv nick:atrelluu] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KEK}
+&{Tags:map[badge-info:map[subscriber:14] badges:map[moments:1 subscriber:12]] Source:map[host:showob@showob.tmi.twitch.tv nick:showob] Command:map[channel:#illojuan command:PRIVMSG] Parameters:KJAJSKDKJASJKDkjas}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:neisewhite@neisewhite.tmi.twitch.tv nick:neisewhite] Command:map[channel:#illojuan command:PRIVMSG] Parameters:le pusieron que te vas a kick, si ponian en el titulo que dices lo que te ofrecieron colaba mas xdd}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:aadaniela2581@aadaniela2581.tmi.twitch.tv nick:aadaniela2581] Command:map[channel:#illojuan command:PRIVMSG] Parameters:Kek}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:0mant@0mant.tmi.twitch.tv nick:0mant] Command:map[channel:#xqc command:PRIVMSG] Parameters:ARCTIC}
+&{Tags:map[badge-info:map[subscriber:25] badges:map[moments:4 subscriber:24]] Source:map[host:wencytheintern@wencytheintern.tmi.twitch.tv nick:wencytheintern] Command:map[channel:#xqc command:PRIVMSG] Parameters:you're cooked brother man}
+&{Tags:map[badge-info:map[subscriber:30] badges:map[moments:5 subscriber:30]] Source:map[host:mo___6@mo___6.tmi.twitch.tv nick:mo___6] Command:map[channel:#xqc command:PRIVMSG] Parameters:TF}
+&{Tags:map[badge-info:map[subscriber:42] badges:map[sub-gifter:200 subscriber:42]] Source:map[host:julianio@julianio.tmi.twitch.tv nick:julianio] Command:map[channel:#xqc command:PRIVMSG] Parameters:u were correct xqc FailFish}
+&{Tags:map[badge-info:<nil> badges:map[moments:4]] Source:map[host:elix_r@elix_r.tmi.twitch.tv nick:elix_r] Command:map[channel:#xqc command:PRIVMSG] Parameters:HOW DO THEY BUILD THE BURJ KHALIFA UNDER WATER? NOWAYING}
+&{Tags:map[badge-info:map[subscriber:30] badges:map[hype-train:2 subscriber:30]] Source:map[host:imzinvl@imzinvl.tmi.twitch.tv nick:imzinvl] Command:map[channel:#xqc command:PRIVMSG] Parameters:Aware}
+&{Tags:map[badge-info:<nil> badges:map[premium:1]] Source:map[host:visageoce@visageoce.tmi.twitch.tv nick:visageoce] Command:map[channel:#xqc command:PRIVMSG] Parameters:It’s real}
+&{Tags:map[badge-info:map[subscriber:19] badges:map[premium:1 subscriber:18]] Source:map[host:finpar11@finpar11.tmi.twitch.tv nick:finpar11] Command:map[channel:#xqc command:PRIVMSG] Parameters:nah the oil platform is actually built liek that}
+&{Tags:map[badge-info:<nil> badges:map[no_audio:1]] Source:map[host:thewanderingshiren@thewanderingshiren.tmi.twitch.tv nick:thewanderingshiren] Command:map[channel:#xqc command:PRIVMSG] Parameters:DEAD SEA GachiPls DEAD SEA GachiPls DEAD SEA GachiPls DEAD SEA GachiPls DEAD SEA GachiPls DEAD SEA GachiPls DEAD SEA GachiPls}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:rjdropemoff__@rjdropemoff__.tmi.twitch.tv nick:rjdropemoff__] Command:map[channel:#xqc command:PRIVMSG] Parameters:ARK TICK}
+&{Tags:map[badge-info:<nil> badges:map[superultracombo-2023:1]] Source:map[host:sparduhh@sparduhh.tmi.twitch.tv nick:sparduhh] Command:map[channel:#xqc command:PRIVMSG] Parameters:omE}
+&{Tags:map[badge-info:map[subscriber:21] badges:map[moments:3 subscriber:18]] Source:map[host:ezaron@ezaron.tmi.twitch.tv nick:ezaron] Command:map[channel:#xqc command:PRIVMSG] Parameters:black sea avg}
+&{Tags:map[badge-info:map[subscriber:29] badges:map[subscriber:24]] Source:map[host:syndrum@syndrum.tmi.twitch.tv nick:syndrum] Command:map[channel:#xqc command:PRIVMSG] Parameters:ur so dumb}
+&{Tags:map[badge-info:map[subscriber:11] badges:map[moments:4 subscriber:9]] Source:map[host:onebaconpancake@onebaconpancake.tmi.twitch.tv nick:onebaconpancake] Command:map[channel:#xqc command:PRIVMSG] Parameters:its an oil rig}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:escurtel@escurtel.tmi.twitch.tv nick:escurtel] Command:map[channel:#xqc command:PRIVMSG] Parameters:black sea Aware}
+&{Tags:map[badge-info:map[subscriber:4] badges:map[moments:2 subscriber:3]] Source:map[host:paperbaot@paperbaot.tmi.twitch.tv nick:paperbaot] Command:map[channel:#xqc command:PRIVMSG] Parameters:Listening}
+&{Tags:map[badge-info:map[subscriber:10] badges:map[glitchcon2020:1 subscriber:9]] Source:map[host:magicalhobo3000@magicalhobo3000.tmi.twitch.tv nick:magicalhobo3000] Command:map[channel:#xqc command:PRIVMSG] Parameters:no it is under water xqc}
+&{Tags:map[badge-info:<nil> badges:map[moments:1]] Source:map[host:bill_tinnitus@bill_tinnitus.tmi.twitch.tv nick:bill_tinnitus] Command:map[channel:#xqc command:PRIVMSG] Parameters:it is 600m under water}
+&{Tags:map[badge-info:<nil> badges:map[no_audio:1]] Source:map[host:420devid@420devid.tmi.twitch.tv nick:420devid] Command:map[channel:#xqc command:PRIVMSG] Parameters:you are so dumb}
+&{Tags:map[badge-info:<nil> badges:<nil>] Source:map[host:itsgvac@itsgvac.tmi.twitch.tv nick:itsgvac] Command:map[channel:#xqc command:PRIVMSG] Parameters:Kappa}
+&{Tags:map[badge-info:map[subscriber:27] badges:map[bits:5000 subscriber:24]] Source:map[host:ekinuu@ekinuu.tmi.twitch.tv nick:ekinuu] Command:map[channel:#xqc command:PRIVMSG] Parameters:monkeyListening}
+&{Tags:map[badge-info:<nil> badges:map[moments:3]] Source:map[host:thatbantisclass@thatbantisclass.tmi.twitch.tv nick:thatbantisclass] Command:map[channel:#xqc command:PRIVMSG] Parameters:Aware 1.2km}
+&{Tags:map[badge-info:<nil> badges:map[no_audio:1]] Source:map[host:smowuw@smowuw.tmi.twitch.tv nick:smowuw] Command:map[channel:#xqc command:PRIVMSG] Parameters:!#showemote  idIot}
