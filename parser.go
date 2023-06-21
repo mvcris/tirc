@@ -58,7 +58,7 @@ type Command struct {
 	Channel string `json:"channel"`
 }
 
-func parseCommand(raw string) map[string]any {
+func parseCommand(raw string, msg *Message) {
 
 	commandParts := strings.Split(raw, " ")
 	parsedCommand := make(map[string]any)
@@ -80,11 +80,15 @@ func parseCommand(raw string) map[string]any {
 	case "USERSTATE", "ROOMSTATE":
 		parsedCommand["command"] = commandParts[0]
 		parsedCommand["channel"] = commandParts[1]
+	case "001":
+		parsedCommand["command"] = commandParts[0]
+		parsedCommand["channel"] = commandParts[1]
+
 	}
-	return parsedCommand
+	msg.Command = parsedCommand
 }
 
-func parseTag(tags string) map[string]any {
+func parseTag(tags string, msg *Message) {
 
 	dictParsedTags := make(map[string]any)
 	parsedTags := strings.Split(tags, ";")
@@ -140,10 +144,10 @@ func parseTag(tags string) map[string]any {
 
 		}
 	}
-	return dictParsedTags
+	msg.Tags = dictParsedTags
 }
 
-func parseSource(raw string) map[string]string {
+func parseSource(raw string, msg *Message) {
 	nick := ""
 	host := ""
 	sourceParse := make(map[string]string)
@@ -158,16 +162,17 @@ func parseSource(raw string) map[string]string {
 	}
 	sourceParse["nick"] = nick
 	sourceParse["host"] = host
-	return sourceParse
+	msg.Source = sourceParse
 }
 
 func parse(message string) *Message {
 	idx := 0
 	parsedMessage := &Message{}
+
 	if strings.HasPrefix(message, "@") {
 		endIdx := strings.Index(message, " ")
 		rawTagsComponent := message[1:endIdx]
-		parsedMessage.Tags = parseTag(rawTagsComponent)
+		parseTag(rawTagsComponent, parsedMessage)
 		idx = endIdx + 1
 	}
 
@@ -175,7 +180,7 @@ func parse(message string) *Message {
 		idx++
 		endIdx := strings.Index(message[idx:], " ") + idx
 		rawSourceComponent := message[idx:endIdx]
-		parsedMessage.Source = parseSource(rawSourceComponent)
+		parseSource(rawSourceComponent, parsedMessage)
 		idx = endIdx + 1
 	}
 
@@ -187,7 +192,7 @@ func parse(message string) *Message {
 	}
 
 	rawCommandComponent := message[idx:endIdx]
-	parsedMessage.Command = parseCommand(rawCommandComponent)
+	parseCommand(rawCommandComponent, parsedMessage)
 
 	if endIdx != len(message) {
 		idx = endIdx + 1
