@@ -1,9 +1,62 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 )
+
+type MsgType uint8
+
+const (
+	JOIN MsgType = iota
+	PART
+	NOTICE
+	CLEARCHAT
+	HOSTTARGET
+	PRIVMSG
+	PING
+	CAP
+	GLOBALUSERSTATE
+	USERSTATE
+	ROOMSTATE
+	RECONNECT
+	LOGGEDIN
+	NUMERIC
+	UNEXPECTED
+	UNSUPPORTED
+)
+
+type MessageTmp struct {
+	Type       MsgType
+	Tags       Tags    `json:"tags"`
+	Source     Source  `json:"source"`
+	Command    Command `json:"command"`
+	Parameters string  `json:"parameters"`
+}
+
+type Tags struct {
+	Badges      map[string]string              `json:"badges"`
+	Color       string                         `json:"color"`
+	DisplayName string                         `json:"displayName"`
+	EmoteOnly   string                         `json:"emoteOnly"`
+	Emotes      map[string][]map[string]string `json:"emotes"`
+	Id          string                         `json:"id"`
+	Mod         string                         `json:"mod"`
+	RoomId      string                         `json:"roomId"`
+	Subscriber  string                         `json:"subscriber"`
+	Turbo       string                         `json:"turbo"`
+	TmiSentTs   string                         `json:"tmiSentTs"`
+	UserId      string                         `json:"userId"`
+	UserType    string                         `json:"userType"`
+}
+
+type Source struct {
+	Nick string `json:"nick"`
+	Host string `json:"host"`
+}
+type Command struct {
+	Command string `json:"command"`
+	Channel string `json:"channel"`
+}
 
 func parseCommand(raw string) map[string]any {
 
@@ -32,6 +85,7 @@ func parseCommand(raw string) map[string]any {
 }
 
 func parseTag(tags string) map[string]any {
+
 	dictParsedTags := make(map[string]any)
 	parsedTags := strings.Split(tags, ";")
 	for _, tag := range parsedTags {
@@ -62,7 +116,7 @@ func parseTag(tags string) map[string]any {
 				for _, emote := range emotes {
 					emoteParts := strings.Split(emote, ":")
 					positions := strings.Split(emoteParts[1], ",")
-					allPosition := make([]map[string]string, len(positions))
+					allPosition := make([]map[string]string, 0)
 					for _, position := range positions {
 						positionParts := strings.Split(position, "-")
 						textPosition := make(map[string]string)
@@ -110,7 +164,6 @@ func parseSource(raw string) map[string]string {
 func parse(message string) *Message {
 	idx := 0
 	parsedMessage := &Message{}
-
 	if strings.HasPrefix(message, "@") {
 		endIdx := strings.Index(message, " ")
 		rawTagsComponent := message[1:endIdx]

@@ -23,7 +23,6 @@ type Client struct {
 	conn          *tls.Conn
 	channels      map[string]bool
 	authenticated bool
-	writer        chan string
 }
 
 func NewClient() *Client {
@@ -32,7 +31,6 @@ func NewClient() *Client {
 		conn:          nil,
 		authenticated: false,
 		channels:      make(map[string]bool),
-		writer:        make(chan string),
 	}
 }
 
@@ -72,7 +70,7 @@ func (c *Client) OnPrevMsg(handle func(m *Message)) {
 
 func (c *Client) Send(msg string) {
 	if c.connected {
-		c.writer <- msg
+		c.conn.Write([]byte(fmt.Sprintf("%s\r\n", msg)))
 	}
 }
 
@@ -112,11 +110,16 @@ func main() {
 	client := NewClient()
 	client.Connect()
 	client.Login()
-	// client.Join("xqc")
-	// client.Join("illojuan")
-	client.Join("nulldemic")
+	client.Join("xqc")
+	client.Join("hasanabi")
+	client.Join("zackrawrr")
+	// client.Join("nulldemic")
 	client.OnPrevMsg(func(m *Message) {
-		// fmt.Printf("%+v text: %s\n", m.Tags["emotes"], m.Parameters)
+		if m.Command["command"] == "PING" {
+			fmt.Println("CHEGOU PING")
+			client.Send(fmt.Sprintf("PONG %s", m.Parameters))
+		}
+		fmt.Printf("%+v\n", m.Parameters)
 	})
 
 	time.Sleep(time.Hour * 1)
