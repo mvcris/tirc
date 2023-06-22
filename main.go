@@ -23,7 +23,9 @@ type Client struct {
 	onPrivMsg     func(m *Message)
 	onConnected   func(m *Message)
 	onPart        func(m *Message)
+	onCommand     func(m *Message)
 	onJoin        func(m *Message)
+	commands      map[string]struct{}
 	connected     bool
 	conn          *tls.Conn
 	channels      map[string]bool
@@ -44,6 +46,7 @@ func NewClient() *Client {
 		actions:       make(chan *Message),
 		authCh:        make(chan bool),
 		mw:            &sync.RWMutex{},
+		commands:      make(map[string]struct{}),
 	}
 	return client
 }
@@ -89,6 +92,15 @@ func (c *Client) Auth(login string, token string) error {
 	return nil
 }
 
+func (c *Client) checkCommand(prefix string) {
+	_, ok := c.commands[prefix]
+	if ok {
+		fmt.Println("tem comando")
+	} else {
+		fmt.Println("nao tem comando")
+	}
+}
+
 func (c *Client) OnPrivMsg(handle func(m *Message)) {
 	c.onPrivMsg = handle
 }
@@ -113,6 +125,14 @@ func (c *Client) Send(msg string) error {
 		}
 	}
 	return nil
+}
+
+func (c *Client) AddCommand(prefix string) {
+	c.commands[prefix] = struct{}{}
+}
+
+func (c *Client) OnCommand(handle func(m *Message)) {
+
 }
 
 func (c *Client) Join(channels ...string) error {
@@ -160,6 +180,15 @@ func (c *Client) parseMessage(message string) {
 		if c.onPrivMsg != nil {
 			c.onPrivMsg(msg)
 		}
+		if isCommand := strings.HasPrefix(msg.Parameters, "!"); isCommand {
+			key := strings.Index(msg.Parameters, " ")
+			if key == -1 {
+				fmt.Println("nao tem outra palavra")
+				break
+			}
+			fmt.Printf("valor: %s", msg.Parameters[1:key])
+		}
+
 	case "CAP":
 		c.connected = true
 		if c.onConnected != nil {
@@ -206,7 +235,7 @@ func main() {
 	client := NewClient()
 	//Listen messages from IRC
 	client.OnPrivMsg(func(m *Message) {
-		fmt.Printf("%+v\n", m.Parameters)
+		// fmt.Printf("%+v\n", m.Parameters)
 	})
 	client.OnConnected(func(m *Message) {
 		bytes, _ := json.Marshal(m)
@@ -221,16 +250,16 @@ func main() {
 		fmt.Println("Join")
 		fmt.Println(m)
 	})
-
+	client.AddCommand("teste")
 	err := client.Auth("justinfan123456", "justinfan123456")
-	client.Join("juansguarnizo", "mizkif", "hasanabi")
+	client.Join("nulldemic")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
 	time.Sleep(time.Second * 3)
-	client.Part("mizkif")
+	// client.Part("mizkif")
 	// client.Part("mizkif")
 	// msg := ":tmi.twitch.tv 001 justinfan123456 :Welcome, GLHF!"
 	// fmt.Println(parse(msg))
