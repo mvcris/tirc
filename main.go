@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/textproto"
@@ -12,15 +13,17 @@ import (
 )
 
 type Message struct {
-	Tags       map[string]any
-	Source     map[string]string
-	Command    map[string]any
-	Parameters string
+	Tags       map[string]any    `json:"tags,omitempty"`
+	Source     map[string]string `json:"source,omitempty"`
+	Command    map[string]any    `json:"command,omitempty"`
+	Parameters string            `json:"parameters,omitempty"`
 }
 
 type Client struct {
 	onPrivMsg     func(m *Message)
 	onConnected   func(m *Message)
+	onPart        func(m *Message)
+	onJoin        func(m *Message)
 	connected     bool
 	conn          *tls.Conn
 	channels      map[string]bool
@@ -70,11 +73,12 @@ func (c *Client) Auth(login string, token string) error {
 		return err
 	}
 	c.connected = true
-	go c.listenActions()
 	go c.handleMessage()
-	c.conn.Write([]byte("CAP REQ :twitch.tv/commands twitch.tv/tags\r\n"))
-	c.conn.Write([]byte(fmt.Sprintf("PASS oauth:%s\r\n", token)))
-	c.conn.Write([]byte(fmt.Sprintf("NICK %s\r\n", login)))
+	//TODO: check error
+	c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
+	c.Send(fmt.Sprintf("PASS oauth:%s\r\n", token))
+	c.Send(fmt.Sprintf("NICK %s\r\n", login))
+
 	//TODO: Improve AUTH check
 	select {
 	case <-c.authCh:
@@ -85,10 +89,16 @@ func (c *Client) Auth(login string, token string) error {
 	return nil
 }
 
-func (c *Client) OnPrevMsg(handle func(m *Message)) {
-	c.mw.RLock()
-	defer c.mw.RUnlock()
+func (c *Client) OnPrivMsg(handle func(m *Message)) {
 	c.onPrivMsg = handle
+}
+
+func (c *Client) OnPart(handle func(m *Message)) {
+	c.onPart = handle
+}
+
+func (c *Client) OnJoin(handle func(m *Message)) {
+	c.onJoin = handle
 }
 
 func (c *Client) OnConnected(handle func(m *Message)) {
@@ -107,6 +117,8 @@ func (c *Client) Send(msg string) error {
 
 func (c *Client) Join(channels ...string) error {
 	if c.connected {
+		c.mw.Lock()
+		defer c.mw.Unlock()
 		for _, channel := range channels {
 			err := c.Send(fmt.Sprintf("JOIN #%s", channel))
 			if err != nil {
@@ -114,6 +126,7 @@ func (c *Client) Join(channels ...string) error {
 			}
 			c.channels[fmt.Sprintf("#%s", channel)] = false
 		}
+
 		return nil
 	}
 	return errors.New("not connected")
@@ -124,58 +137,51 @@ func (c *Client) onSuccessJoin(message *Message) {
 }
 
 func (c *Client) onPing(msg *Message) {
-	//TODO: ON PING RESPONSE ERROR??? MB RETRY CNNCT
+	//TODO: PING RESPONSE ERROR??? MB RETRY CNNCT
 	c.Send(fmt.Sprintf("PONG %s", msg.Parameters))
+	fmt.Println("PONG WORKS")
 }
 
 func (c *Client) Part(channel string) error {
-	defer c.mw.RUnlock()
 	if c.connected {
-		c.mw.RLock()
-		c.conn.Write([]byte(fmt.Sprintf("PART #%s\r\n", channel)))
+		c.mw.Lock()
+		defer c.mw.Unlock()
+		//TODO: check error
+		c.Send(fmt.Sprintf("PART #%s", channel))
 		delete(c.channels, fmt.Sprintf("#%s", channel))
 	}
 	return errors.New("not connected")
 }
 
-func (c *Client) listenActions() {
-	for {
-		select {
-		case msg := <-c.actions:
-			switch msg.Command["command"] {
-			case "CAP":
-				c.connected = true
-				if c.onConnected != nil {
-					c.onConnected(msg)
-				}
-			case "PING":
-				c.onPing(msg)
-			case "001":
-				c.authenticated = true
-				c.authCh <- true
-			case "JOIN":
-
-				channel := msg.Command["channel"].(string)
-				c.mw.RLock()
-				c.channels[channel] = true
-				c.mw.RUnlock()
-			case "PART":
-				channel := msg.Command["channel"].(string)
-				c.mw.RLock()
-				delete(c.channels, channel)
-				c.mw.RUnlock()
-			}
-		}
-	}
-}
-
 func (c *Client) parseMessage(message string) {
-	parsedMessage := parse(message)
-	c.actions <- parsedMessage
-	c.mw.Lock()
-	defer c.mw.Unlock()
-	if c.onPrivMsg != nil {
-		c.onPrivMsg(parsedMessage)
+	msg := parse(message)
+	switch msg.Command["command"] {
+	case "PRIVMSG":
+		if c.onPrivMsg != nil {
+			c.onPrivMsg(msg)
+		}
+	case "CAP":
+		c.connected = true
+		if c.onConnected != nil {
+			c.onConnected(msg)
+		}
+	case "PING":
+		c.onPing(msg)
+	case "001":
+		c.authenticated = true
+		c.authCh <- true
+	case "JOIN":
+		channel := msg.Command["channel"].(string)
+		c.onJoin(msg)
+		c.mw.RLock()
+		c.channels[channel] = true
+		c.mw.RUnlock()
+	case "PART":
+		channel := msg.Command["channel"].(string)
+		c.onPart(msg)
+		c.mw.RLock()
+		delete(c.channels, channel)
+		c.mw.RUnlock()
 	}
 }
 
@@ -198,18 +204,33 @@ func (c *Client) handleMessage() {
 
 func main() {
 	client := NewClient()
+	//Listen messages from IRC
+	client.OnPrivMsg(func(m *Message) {
+		fmt.Printf("%+v\n", m.Parameters)
+	})
+	client.OnConnected(func(m *Message) {
+		bytes, _ := json.Marshal(m)
+		fmt.Println("connect")
+		fmt.Println(string(bytes))
+	})
+	client.OnPart(func(m *Message) {
+		fmt.Println("PART")
+		fmt.Println(m)
+	})
+	client.OnJoin(func(m *Message) {
+		fmt.Println("Join")
+		fmt.Println(m)
+	})
+
 	err := client.Auth("justinfan123456", "justinfan123456")
+	client.Join("juansguarnizo", "mizkif", "hasanabi")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	client.Join("juansguarnizo", "mizkif")
-	client.OnPrevMsg(func(m *Message) {
-		fmt.Printf("%+v\n", m.Parameters)
-	})
-	client.OnConnected(func(m *Message) {
-		fmt.Println(m)
-	})
+
+	time.Sleep(time.Second * 3)
+	client.Part("mizkif")
 	// client.Part("mizkif")
 	// msg := ":tmi.twitch.tv 001 justinfan123456 :Welcome, GLHF!"
 	// fmt.Println(parse(msg))
