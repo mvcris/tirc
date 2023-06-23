@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"crypto/tls"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/textproto"
@@ -11,6 +10,17 @@ import (
 	"sync"
 	"time"
 )
+
+type HandleFunc func(msg *Message)
+type HandleCommandFunc func(msg *CommandMessage)
+
+//TODO: REFACTOR STRUCTS Message | CommandMessage
+
+type CommandMessage struct {
+	msg     *Message
+	command string
+	source  string
+}
 
 type Message struct {
 	Tags       map[string]any    `json:"tags,omitempty"`
@@ -20,20 +30,18 @@ type Message struct {
 }
 
 type Client struct {
-	onPrivMsg     func(m *Message)
-	onConnected   func(m *Message)
-	onPart        func(m *Message)
-	onCommand     func(m *Message)
-	onJoin        func(m *Message)
+	onPrivMsg     HandleFunc
+	onConnected   HandleFunc
+	onPart        HandleFunc
+	onCommand     HandleFunc
+	onJoin        HandleFunc
 	commands      map[string]struct{}
+	commandsFuncs map[string]HandleCommandFunc
 	connected     bool
 	conn          *tls.Conn
 	channels      map[string]bool
 	authenticated bool
-	actions       chan *Message
-	capCh         chan bool
 	authCh        chan bool
-	nickCh        chan bool
 	mw            *sync.RWMutex
 }
 
@@ -43,10 +51,10 @@ func NewClient() *Client {
 		conn:          nil,
 		authenticated: false,
 		channels:      make(map[string]bool),
-		actions:       make(chan *Message),
 		authCh:        make(chan bool),
 		mw:            &sync.RWMutex{},
 		commands:      make(map[string]struct{}),
+		commandsFuncs: make(map[string]HandleCommandFunc),
 	}
 	return client
 }
@@ -92,28 +100,37 @@ func (c *Client) Auth(login string, token string) error {
 	return nil
 }
 
-func (c *Client) checkCommand(prefix string) {
-	_, ok := c.commands[prefix]
-	if ok {
-		fmt.Println("tem comando")
-	} else {
-		fmt.Println("nao tem comando")
+func (c *Client) checkCommand(msg *Message) {
+	prefix := strings.Replace(msg.Parameters, "!", "", 1)
+	commandMsg := &CommandMessage{msg, prefix, ""}
+
+	// fmt.Println(prefix)
+	if key := strings.Index(msg.Parameters, " "); key != -1 {
+		prefix = msg.Parameters[1:key]
+		commandMsg.source = strings.Replace(msg.Parameters[key:], " ", "", 1)
+		commandMsg.command = prefix
+	}
+
+	fmt.Println(prefix)
+	if _, ok := c.commands[prefix]; ok {
+		fmt.Println(prefix)
+		c.commandsFuncs[prefix](commandMsg)
 	}
 }
 
-func (c *Client) OnPrivMsg(handle func(m *Message)) {
+func (c *Client) OnPrivMsg(handle HandleFunc) {
 	c.onPrivMsg = handle
 }
 
-func (c *Client) OnPart(handle func(m *Message)) {
+func (c *Client) OnPart(handle HandleFunc) {
 	c.onPart = handle
 }
 
-func (c *Client) OnJoin(handle func(m *Message)) {
+func (c *Client) OnJoin(handle HandleFunc) {
 	c.onJoin = handle
 }
 
-func (c *Client) OnConnected(handle func(m *Message)) {
+func (c *Client) OnConnected(handle HandleFunc) {
 	c.onConnected = handle
 }
 
@@ -127,12 +144,15 @@ func (c *Client) Send(msg string) error {
 	return nil
 }
 
-func (c *Client) AddCommand(prefix string) {
+func (c *Client) AddCommand(prefix string, handle HandleCommandFunc) {
 	c.commands[prefix] = struct{}{}
+	c.commandsFuncs[prefix] = handle
 }
 
-func (c *Client) OnCommand(handle func(m *Message)) {
-
+func (c *Client) OnCommand(prefix string, handle HandleCommandFunc) {
+	if fun, ok := c.commandsFuncs[prefix]; ok && fun != nil {
+		fun = handle
+	}
 }
 
 func (c *Client) Join(channels ...string) error {
@@ -181,12 +201,7 @@ func (c *Client) parseMessage(message string) {
 			c.onPrivMsg(msg)
 		}
 		if isCommand := strings.HasPrefix(msg.Parameters, "!"); isCommand {
-			key := strings.Index(msg.Parameters, " ")
-			if key == -1 {
-				fmt.Println("nao tem outra palavra")
-				break
-			}
-			fmt.Printf("valor: %s", msg.Parameters[1:key])
+			c.checkCommand(msg)
 		}
 
 	case "CAP":
@@ -235,31 +250,44 @@ func main() {
 	client := NewClient()
 	//Listen messages from IRC
 	client.OnPrivMsg(func(m *Message) {
+
 		// fmt.Printf("%+v\n", m.Parameters)
 	})
 	client.OnConnected(func(m *Message) {
-		bytes, _ := json.Marshal(m)
-		fmt.Println("connect")
-		fmt.Println(string(bytes))
+		// bytes, _ := json.Marshal(m)
+		// fmt.Println("connect")
+		// fmt.Println(string(bytes))
 	})
 	client.OnPart(func(m *Message) {
-		fmt.Println("PART")
-		fmt.Println(m)
+		// fmt.Println("PART")
+		// fmt.Println(m)
 	})
 	client.OnJoin(func(m *Message) {
-		fmt.Println("Join")
-		fmt.Println(m)
+		// fmt.Println("Join")
+		// fmt.Println(m)
 	})
-	client.AddCommand("teste")
+
+	client.AddCommand("comando1", func(m *CommandMessage) {
+		fmt.Printf("%+v\n", m)
+	})
+	client.AddCommand("comando2", func(m *CommandMessage) {
+		fmt.Printf("comando 2: %s\n", m.source)
+	})
+
+	client.AddCommand("comando3", func(m *CommandMessage) {
+		fmt.Printf("comando 3: %s\n", m.source)
+	})
+
 	err := client.Auth("justinfan123456", "justinfan123456")
+	// client.Join("nulldemic", "kaicenat", "hasanabi", "zackrawrr")
 	client.Join("nulldemic")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	time.Sleep(time.Second * 3)
-	// client.Part("mizkif")
+	time.Sleep(time.Second * 5)
+	// client.Part("nulldemic")
 	// client.Part("mizkif")
 	// msg := ":tmi.twitch.tv 001 justinfan123456 :Welcome, GLHF!"
 	// fmt.Println(parse(msg))

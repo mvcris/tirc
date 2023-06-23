@@ -1,0 +1,9 @@
+-> finish twitch irc commands 
+-> finish channel custom command
+-> improve parser performance
+-> better auth check
+-> on NOTICE msg remove from channels map add remove handlers (avoid mem leak)
+->? option to add refresh token (Refresh tokens, like access tokens, can become invalid if the user changes their password or disconnects your app)
+->Refactor struct types (Message, Command)
+-> Creating client config (constuctor or file//yaml//json)
+-> Better function names
