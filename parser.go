@@ -89,7 +89,6 @@ func parseCommand(raw string, msg *Message) {
 }
 
 func parseTag(tags string, msg *Message) {
-
 	dictParsedTags := make(map[string]any)
 	parsedTags := strings.Split(tags, ";")
 	for _, tag := range parsedTags {
@@ -99,7 +98,6 @@ func parseTag(tags string, msg *Message) {
 		if parsedTag[1] != "" {
 			tagValue = parsedTag[1]
 		}
-
 		switch parsedTag[0] {
 		case "badges", "badge-info":
 			if tagValue != "" {

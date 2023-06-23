@@ -250,8 +250,7 @@ func main() {
 	client := NewClient()
 	//Listen messages from IRC
 	client.OnPrivMsg(func(m *Message) {
-
-		// fmt.Printf("%+v\n", m.Parameters)
+		fmt.Printf("%+v\n", m.Parameters)
 	})
 	client.OnConnected(func(m *Message) {
 		// bytes, _ := json.Marshal(m)
@@ -279,7 +278,7 @@ func main() {
 	})
 
 	err := client.Auth("justinfan123456", "justinfan123456")
-	// client.Join("nulldemic", "kaicenat", "hasanabi", "zackrawrr")
+	client.Join("sodapoppin", "jesusavgn")
 	client.Join("nulldemic")
 	if err != nil {
 		fmt.Println(err)
