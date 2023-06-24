@@ -31,7 +31,7 @@ type Message struct {
 
 type Client struct {
 	MaxParallelMessage int32
-	commands           map[string]struct{}
+	commands           []string
 	connected          bool
 	conn               *tls.Conn
 	channels           map[string]bool
@@ -62,7 +62,7 @@ func NewClient() *Client {
 		channels:      make(map[string]bool),
 		authCh:        make(chan bool),
 		mw:            &sync.RWMutex{},
-		commands:      make(map[string]struct{}),
+		commands:      make([]string, 0),
 		msgCh:         channels,
 	}
 	return client
@@ -123,8 +123,10 @@ func (c *Client) checkCommand(msg *Message) *CommandMessage {
 		commandMsg.command = prefix
 	}
 
-	if _, ok := c.commands[prefix]; ok {
-		return commandMsg
+	for _, command := range c.commands {
+		if command == prefix {
+			return commandMsg
+		}
 	}
 
 	return nil
@@ -174,12 +176,26 @@ func (c *Client) Send(msg string) error {
 	return nil
 }
 
-func (c *Client) RegisterCommand(maxParallelMessage int, prefix string, handle HandleCommandFunc) {
-	c.commands[prefix] = struct{}{}
+func (c *Client) IsValidCommand(msg *CommandMessage) bool {
+	for _, command := range c.commands {
+		if msg.command == command {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Client) RegisterCommands(maxParallelMessage int, commands []string, handle HandleCommandFunc) {
+	c.mw.Lock()
+	c.commands = commands
+	c.mw.Unlock()
+
 	for i := 0; i < maxParallelMessage; i++ {
 		go func() {
 			for msg := range c.msgCh.cmdCh.Out {
-				handle(*msg)
+				if canHandle := c.IsValidCommand(msg); canHandle {
+					handle(*msg)
+				}
 			}
 		}()
 	}
@@ -288,7 +304,8 @@ func (c *Client) handleMessage() {
 func main() {
 	client := NewClient()
 
-	client.OnPrivMsg(3, func(m Message) {
+	client.OnPrivMsg(1, func(m Message) {
+		// time.Sleep(time.Second * 10)
 		fmt.Printf("%+v\n", m.Parameters)
 	})
 	client.OnPart(1, func(m Message) {
@@ -299,20 +316,17 @@ func main() {
 		fmt.Println(m)
 	})
 
-	client.RegisterCommand(1, "comando1", func(m CommandMessage) {
-		fmt.Printf("%+v\n", m)
+	commands := []string{"comando1", "comando2", "comando3"}
+	client.RegisterCommands(1, commands, func(m CommandMessage) {
+		fmt.Println(m.command)
 	})
-	client.RegisterCommand(1, "comando2", func(m CommandMessage) {
-	})
-
 	err := client.Auth("justinfan123456", "justinfan123456")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	client.Join("koreshzy", "goa7league")
-	client.Join("nulldemic")
+	client.Join("frametamer666", "elraenn", "nulldemic")
 
 	exit := make(chan bool)
 	<-exit
