@@ -13,10 +13,8 @@ import (
 	"github.com/smallnest/chanx"
 )
 
-type HandleFunc func(msg *Message)
-type HandleCommandFunc func(msg *CommandMessage)
-
-//TODO: REFACTOR STRUCTS Message | CommandMessage
+type HandleFunc func(msg Message)
+type HandleCommandFunc func(msg CommandMessage)
 
 type CommandMessage struct {
 	msg     *Message
@@ -40,31 +38,32 @@ type Client struct {
 	authenticated      bool
 	authCh             chan bool
 	mw                 *sync.RWMutex
-	privCh             chan struct{}
-	ch                 *chanx.UnboundedChan[*Message]
+	msgCh              *Channels
 }
 
-type ClientConfig struct {
-	MaxParallelMessage int32
+type Channels struct {
+	privCh *chanx.UnboundedChan[*Message]
+	partCh *chanx.UnboundedChan[*Message]
+	joinCh *chanx.UnboundedChan[*Message]
+	cmdCh  *chanx.UnboundedChan[*CommandMessage]
 }
 
-func NewClient(config *ClientConfig) *Client {
-	var maxParallel int32 = 5
-
-	if config != nil {
-		maxParallel = config.MaxParallelMessage
+func NewClient() *Client {
+	channels := &Channels{
+		privCh: chanx.NewUnboundedChan[*Message](10),
+		partCh: chanx.NewUnboundedChan[*Message](10),
+		joinCh: chanx.NewUnboundedChan[*Message](10),
+		cmdCh:  chanx.NewUnboundedChan[*CommandMessage](10),
 	}
-
 	client := &Client{
-		connected:          false,
-		conn:               nil,
-		authenticated:      false,
-		channels:           make(map[string]bool),
-		authCh:             make(chan bool),
-		mw:                 &sync.RWMutex{},
-		commands:           make(map[string]struct{}),
-		ch:                 chanx.NewUnboundedChan[*Message](10),
-		MaxParallelMessage: maxParallel,
+		connected:     false,
+		conn:          nil,
+		authenticated: false,
+		channels:      make(map[string]bool),
+		authCh:        make(chan bool),
+		mw:            &sync.RWMutex{},
+		commands:      make(map[string]struct{}),
+		msgCh:         channels,
 	}
 	return client
 }
@@ -95,9 +94,12 @@ func (c *Client) Auth(login string, token string) error {
 	}
 	c.connected = true
 	//TODO: check error
-	c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
-	c.Send(fmt.Sprintf("PASS oauth:%s\r\n", token))
-	c.Send(fmt.Sprintf("NICK %s\r\n", login))
+	err = c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
+	err = c.Send(fmt.Sprintf("PASS oauth:%s\r\n", token))
+	err = c.Send(fmt.Sprintf("NICK %s\r\n", login))
+	if err != nil {
+		return err
+	}
 	go c.handleMessage()
 	//TODO: Improve AUTH check
 	select {
@@ -128,23 +130,38 @@ func (c *Client) checkCommand(msg *Message) *CommandMessage {
 	return nil
 }
 
-func (c *Client) OnPrivMsg(handle HandleFunc) {
-	for i := 0; i < int(c.MaxParallelMessage); i++ {
+func (c *Client) OnPrivMsg(maxParallelMessage int, handle HandleFunc) {
+	for i := 0; i < maxParallelMessage; i++ {
 		go func() {
-			for msg := range c.ch.Out {
-				handle(msg)
+			for msg := range c.msgCh.privCh.Out {
+				handle(*msg)
 			}
 		}()
 	}
 }
 
-func (c *Client) OnPart(handle HandleFunc) {
+func (c *Client) OnPart(maxParallelMessage int, handle HandleFunc) {
+	for i := 0; i < maxParallelMessage; i++ {
+		go func() {
+			for msg := range c.msgCh.partCh.Out {
+				handle(*msg)
+			}
+		}()
+	}
 }
 
-func (c *Client) OnJoin(handle HandleFunc) {
+func (c *Client) OnJoin(maxParallelMessage int, handle HandleFunc) {
+	for i := 0; i < maxParallelMessage; i++ {
+		go func() {
+			for msg := range c.msgCh.joinCh.Out {
+				handle(*msg)
+			}
+		}()
+	}
+
 }
 
-func (c *Client) OnConnected(handle HandleFunc) {
+func (c *Client) OnNotice(handle HandleFunc) {
 }
 
 func (c *Client) Send(msg string) error {
@@ -157,15 +174,22 @@ func (c *Client) Send(msg string) error {
 	return nil
 }
 
-func (c *Client) AddCommand(prefix string, handle HandleCommandFunc) {
+func (c *Client) RegisterCommand(maxParallelMessage int, prefix string, handle HandleCommandFunc) {
 	c.commands[prefix] = struct{}{}
-	go func() {
-		for msg := range c.ch.Out {
-			if command := c.checkCommand(msg); command != nil {
-				handle(command)
+	for i := 0; i < maxParallelMessage; i++ {
+		go func() {
+			for msg := range c.msgCh.cmdCh.Out {
+				handle(*msg)
 			}
-		}
-	}()
+		}()
+	}
+}
+
+func CheckMessageCommand(command string, msg *Message) bool {
+	if msg.Command["command"] == command {
+		return true
+	}
+	return false
 }
 
 func (c *Client) Join(channels ...string) error {
@@ -185,8 +209,10 @@ func (c *Client) Join(channels ...string) error {
 	return errors.New("not connected")
 }
 
-func (c *Client) onSuccessJoin(message *Message) {
-
+func (c *Client) CloseMessageChannels() {
+	close(c.msgCh.partCh.In)
+	close(c.msgCh.privCh.In)
+	close(c.msgCh.joinCh.In)
 }
 
 func (c *Client) onPing(msg *Message) {
@@ -211,11 +237,12 @@ func (c *Client) parseMessage(message string) {
 	msg := parse(message)
 	switch msg.Command["command"] {
 	case "PRIVMSG":
-		c.ch.In <- msg
 		if isCommand := strings.HasPrefix(msg.Parameters, "!"); isCommand {
-			c.checkCommand(msg)
+			if cmdMsg := c.checkCommand(msg); cmdMsg != nil {
+				c.msgCh.cmdCh.In <- cmdMsg
+			}
 		}
-
+		c.msgCh.privCh.In <- msg
 	case "CAP":
 		c.connected = true
 	case "PING":
@@ -225,23 +252,24 @@ func (c *Client) parseMessage(message string) {
 	case "001":
 		c.authenticated = true
 		c.authCh <- true
-		fmt.Println("conectado")
 	case "JOIN":
 		channel := msg.Command["channel"].(string)
 		c.mw.RLock()
 		c.channels[channel] = true
 		c.mw.RUnlock()
+		c.msgCh.joinCh.In <- msg
 	case "PART":
 		channel := msg.Command["channel"].(string)
 		c.mw.RLock()
 		delete(c.channels, channel)
 		c.mw.RUnlock()
+		c.msgCh.partCh.In <- msg
 	}
 }
 
 func (c *Client) handleMessage() {
 	defer c.conn.Close()
-	defer close(c.ch.In)
+	defer c.CloseMessageChannels()
 	r := textproto.NewReader(bufio.NewReader(c.conn))
 	for {
 		raw, err := r.ReadLine()
@@ -258,46 +286,34 @@ func (c *Client) handleMessage() {
 }
 
 func main() {
-	client := NewClient(&ClientConfig{MaxParallelMessage: 5})
-	//Listen messages from IRC
-	client.OnPrivMsg(func(m *Message) {
+	client := NewClient()
+
+	client.OnPrivMsg(3, func(m Message) {
 		fmt.Printf("%+v\n", m.Parameters)
 	})
-	// client.OnConnected(func(m *Message) {
-	// 	fmt.Println("finish connection")
-	// 	// bytes, _ := json.Marshal(m)
-	// 	// fmt.Println("connect")
-	// 	// fmt.Println(string(bytes))
-	// })
-	// client.OnPart(func(m *Message) {
-	// 	// fmt.Println("PART")
-	// 	// fmt.Println(m)
-	// })
-	// client.OnJoin(func(m *Message) {
-	// 	// fmt.Println("Join")
-	// 	// fmt.Println(m)
-	// })
+	client.OnPart(1, func(m Message) {
+		fmt.Println(m)
+	})
+	client.OnJoin(1, func(m Message) {
+		fmt.Println("Join")
+		fmt.Println(m)
+	})
 
-	client.AddCommand("comando1", func(m *CommandMessage) {
+	client.RegisterCommand(1, "comando1", func(m CommandMessage) {
 		fmt.Printf("%+v\n", m)
 	})
-	client.AddCommand("comando2", func(m *CommandMessage) {
-		client.Send("CAP REQ :twitch.tv/commands")
+	client.RegisterCommand(1, "comando2", func(m CommandMessage) {
 	})
 
 	err := client.Auth("justinfan123456", "justinfan123456")
-	client.Join("kaicenat", "yourragegaming")
-	client.Join("nulldemic")
-
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// client.Part("mizkif")
-	// msg := ":tmi.twitch.tv 001 justinfan123456 :Welcome, GLHF!"
-	// fmt.Println(parse(msg))
-	// time.Sleep(time.Second * 10)
+	client.Join("koreshzy", "goa7league")
+	client.Join("nulldemic")
+
 	exit := make(chan bool)
 	<-exit
 }

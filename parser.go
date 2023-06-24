@@ -6,49 +6,6 @@ import (
 
 type MsgType uint8
 
-const (
-	JOIN MsgType = iota
-	PART
-	NOTICE
-	CLEARCHAT
-	HOSTTARGET
-	PRIVMSG
-	PING
-	CAP
-	GLOBALUSERSTATE
-	USERSTATE
-	ROOMSTATE
-	RECONNECT
-	LOGGEDIN
-	NUMERIC
-	UNEXPECTED
-	UNSUPPORTED
-)
-
-type MessageTmp struct {
-	Type       MsgType
-	Tags       Tags    `json:"tags"`
-	Source     Source  `json:"source"`
-	Command    Command `json:"command"`
-	Parameters string  `json:"parameters"`
-}
-
-type Tags struct {
-	Badges      map[string]string              `json:"badges"`
-	Color       string                         `json:"color"`
-	DisplayName string                         `json:"displayName"`
-	EmoteOnly   string                         `json:"emoteOnly"`
-	Emotes      map[string][]map[string]string `json:"emotes"`
-	Id          string                         `json:"id"`
-	Mod         string                         `json:"mod"`
-	RoomId      string                         `json:"roomId"`
-	Subscriber  string                         `json:"subscriber"`
-	Turbo       string                         `json:"turbo"`
-	TmiSentTs   string                         `json:"tmiSentTs"`
-	UserId      string                         `json:"userId"`
-	UserType    string                         `json:"userType"`
-}
-
 type Source struct {
 	Nick string `json:"nick"`
 	Host string `json:"host"`
@@ -63,7 +20,15 @@ func parseCommand(raw string, msg *Message) {
 	commandParts := strings.Split(raw, " ")
 	parsedCommand := make(map[string]any)
 	switch commandParts[0] {
-	case "JOIN", "PART", "NOTICE", "CLEARCHAT", "HOSTTARGET", "PRIVMSG":
+	case "JOIN",
+		"PART",
+		"NOTICE",
+		"CLEARCHAT",
+		"HOSTTARGET",
+		"PRIVMSG",
+		"USERSTATE",
+		"ROOMSTATE",
+		"001":
 		parsedCommand["command"] = commandParts[0]
 		parsedCommand["channel"] = commandParts[1]
 	case "PING":
@@ -77,15 +42,6 @@ func parseCommand(raw string, msg *Message) {
 		parsedCommand["isCapRequestEnable"] = capReqEnabled
 	case "GLOBALUSERSTATE":
 		parsedCommand["command"] = commandParts[0]
-	case "USERSTATE", "ROOMSTATE":
-		parsedCommand["command"] = commandParts[0]
-		parsedCommand["channel"] = commandParts[1]
-	case "001":
-		parsedCommand["command"] = commandParts[0]
-		parsedCommand["channel"] = commandParts[1]
-	case "376":
-		//Connected
-	case "353", "USERNOTICE":
 	}
 	msg.Command = parsedCommand
 }
