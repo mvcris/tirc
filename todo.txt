@@ -1,7 +1,7 @@
 -> finish twitch irc commands 
+-> unbounded channel (param to define max cache size | option to save messages on db to avoid data loss)
 -> finish channel custom command
 -> improve parser performance
--> better auth check
 -> on NOTICE msg remove from channels map add remove handlers (avoid mem leak)
 ->? option to add refresh token (Refresh tokens, like access tokens, can become invalid if the user changes their password or disconnects your app)
 ->Refactor struct types (Message, Command)

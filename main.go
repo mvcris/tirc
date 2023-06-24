@@ -43,6 +43,7 @@ type Client struct {
 	authenticated bool
 	authCh        chan bool
 	mw            *sync.RWMutex
+	privCh        chan struct{}
 }
 
 func NewClient() *Client {
@@ -84,17 +85,16 @@ func (c *Client) Auth(login string, token string) error {
 		return err
 	}
 	c.connected = true
-	go c.handleMessage()
 	//TODO: check error
 	c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
 	c.Send(fmt.Sprintf("PASS oauth:%s\r\n", token))
 	c.Send(fmt.Sprintf("NICK %s\r\n", login))
-
+	go c.handleMessage()
 	//TODO: Improve AUTH check
 	select {
 	case <-c.authCh:
 		break
-	case <-time.After(time.Second * 5):
+	case <-time.After(time.Second * 15):
 		return errors.New("auth error")
 	}
 	return nil
@@ -104,16 +104,13 @@ func (c *Client) checkCommand(msg *Message) {
 	prefix := strings.Replace(msg.Parameters, "!", "", 1)
 	commandMsg := &CommandMessage{msg, prefix, ""}
 
-	// fmt.Println(prefix)
 	if key := strings.Index(msg.Parameters, " "); key != -1 {
 		prefix = msg.Parameters[1:key]
 		commandMsg.source = strings.Replace(msg.Parameters[key:], " ", "", 1)
 		commandMsg.command = prefix
 	}
 
-	fmt.Println(prefix)
 	if _, ok := c.commands[prefix]; ok {
-		fmt.Println(prefix)
 		c.commandsFuncs[prefix](commandMsg)
 	}
 }
@@ -194,11 +191,15 @@ func (c *Client) Part(channel string) error {
 }
 
 func (c *Client) parseMessage(message string) {
+
+	//TODO: add msgs to a queue
 	msg := parse(message)
 	switch msg.Command["command"] {
 	case "PRIVMSG":
 		if c.onPrivMsg != nil {
+			start := time.Now()
 			c.onPrivMsg(msg)
+			fmt.Println(time.Since(start))
 		}
 		if isCommand := strings.HasPrefix(msg.Parameters, "!"); isCommand {
 			c.checkCommand(msg)
@@ -253,6 +254,7 @@ func main() {
 		fmt.Printf("%+v\n", m.Parameters)
 	})
 	client.OnConnected(func(m *Message) {
+		fmt.Println("finish connection")
 		// bytes, _ := json.Marshal(m)
 		// fmt.Println("connect")
 		// fmt.Println(string(bytes))
@@ -267,14 +269,8 @@ func main() {
 	})
 
 	client.AddCommand("comando1", func(m *CommandMessage) {
+		time.Sleep(time.Second * 5)
 		fmt.Printf("%+v\n", m)
-	})
-	client.AddCommand("comando2", func(m *CommandMessage) {
-		fmt.Printf("comando 2: %s\n", m.source)
-	})
-
-	client.AddCommand("comando3", func(m *CommandMessage) {
-		fmt.Printf("comando 3: %s\n", m.source)
 	})
 
 	err := client.Auth("justinfan123456", "justinfan123456")
@@ -285,11 +281,11 @@ func main() {
 		return
 	}
 
-	time.Sleep(time.Second * 5)
-	// client.Part("nulldemic")
+	// time.Sleep(time.Second * 5)
 	// client.Part("mizkif")
 	// msg := ":tmi.twitch.tv 001 justinfan123456 :Welcome, GLHF!"
 	// fmt.Println(parse(msg))
+	// time.Sleep(time.Second * 10)
 	exit := make(chan bool)
 	<-exit
 }
