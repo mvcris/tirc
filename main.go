@@ -102,14 +102,16 @@ func (c *Client) Auth(login string, token string) error {
 	//TODO: Improve AUTH check
 	select {
 	case <-c.authCh:
+		close(c.authCh)
 		break
 	case <-time.After(time.Second * 5):
+		close(c.authCh)
 		return errors.New("auth error")
 	}
 	return nil
 }
 
-func (c *Client) checkCommand(msg *Message) {
+func (c *Client) checkCommand(msg *Message) *CommandMessage {
 	prefix := strings.Replace(msg.Parameters, "!", "", 1)
 	commandMsg := &CommandMessage{msg, prefix, ""}
 
@@ -120,14 +122,16 @@ func (c *Client) checkCommand(msg *Message) {
 	}
 
 	if _, ok := c.commands[prefix]; ok {
+		return commandMsg
 	}
+
+	return nil
 }
 
 func (c *Client) OnPrivMsg(handle HandleFunc) {
 	for i := 0; i < int(c.MaxParallelMessage); i++ {
 		go func() {
 			for msg := range c.ch.Out {
-				time.Sleep(time.Second * 3)
 				handle(msg)
 			}
 		}()
@@ -155,6 +159,13 @@ func (c *Client) Send(msg string) error {
 
 func (c *Client) AddCommand(prefix string, handle HandleCommandFunc) {
 	c.commands[prefix] = struct{}{}
+	go func() {
+		for msg := range c.ch.Out {
+			if command := c.checkCommand(msg); command != nil {
+				handle(command)
+			}
+		}
+	}()
 }
 
 func (c *Client) Join(channels ...string) error {
@@ -229,6 +240,7 @@ func (c *Client) parseMessage(message string) {
 
 func (c *Client) handleMessage() {
 	defer c.conn.Close()
+	defer close(c.ch.In)
 	r := textproto.NewReader(bufio.NewReader(c.conn))
 	for {
 		raw, err := r.ReadLine()
@@ -245,9 +257,10 @@ func (c *Client) handleMessage() {
 }
 
 func main() {
-	client := NewClient(&ClientConfig{MaxParallelMessage: 3})
+	client := NewClient(&ClientConfig{MaxParallelMessage: 1})
 	//Listen messages from IRC
 	client.OnPrivMsg(func(m *Message) {
+		time.Sleep(time.Second * 5)
 		fmt.Printf("%+v\n", m.Parameters)
 	})
 	// client.OnConnected(func(m *Message) {
@@ -265,9 +278,12 @@ func main() {
 	// 	// fmt.Println(m)
 	// })
 
-	// client.AddCommand("comando1", func(m *CommandMessage) {
-	// 	fmt.Printf("%+v\n", m)
-	// })
+	client.AddCommand("comando1", func(m *CommandMessage) {
+		fmt.Printf("%+v\n", m)
+	})
+	client.AddCommand("comando2", func(m *CommandMessage) {
+		fmt.Printf("%+v\n", m)
+	})
 
 	err := client.Auth("justinfan123456", "justinfan123456")
 	client.Join("sodapoppin", "jesusavgn")
@@ -277,7 +293,6 @@ func main() {
 		return
 	}
 
-	// time.Sleep(time.Second * 5)
 	// client.Part("mizkif")
 	// msg := ":tmi.twitch.tv 001 justinfan123456 :Welcome, GLHF!"
 	// fmt.Println(parse(msg))
