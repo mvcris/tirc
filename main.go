@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/smallnest/chanx"
 )
 
 type HandleFunc func(msg *Message)
@@ -30,32 +32,39 @@ type Message struct {
 }
 
 type Client struct {
-	onPrivMsg     HandleFunc
-	onConnected   HandleFunc
-	onPart        HandleFunc
-	onCommand     HandleFunc
-	onJoin        HandleFunc
-	commands      map[string]struct{}
-	commandsFuncs map[string]HandleCommandFunc
-	connected     bool
-	conn          *tls.Conn
-	channels      map[string]bool
-	authenticated bool
-	authCh        chan bool
-	mw            *sync.RWMutex
-	privCh        chan struct{}
+	MaxParallelMessage int32
+	commands           map[string]struct{}
+	connected          bool
+	conn               *tls.Conn
+	channels           map[string]bool
+	authenticated      bool
+	authCh             chan bool
+	mw                 *sync.RWMutex
+	privCh             chan struct{}
+	ch                 *chanx.UnboundedChan[*Message]
 }
 
-func NewClient() *Client {
+type ClientConfig struct {
+	MaxParallelMessage int32
+}
+
+func NewClient(config *ClientConfig) *Client {
+	var maxParallel int32 = 5
+
+	if config != nil {
+		maxParallel = config.MaxParallelMessage
+	}
+
 	client := &Client{
-		connected:     false,
-		conn:          nil,
-		authenticated: false,
-		channels:      make(map[string]bool),
-		authCh:        make(chan bool),
-		mw:            &sync.RWMutex{},
-		commands:      make(map[string]struct{}),
-		commandsFuncs: make(map[string]HandleCommandFunc),
+		connected:          false,
+		conn:               nil,
+		authenticated:      false,
+		channels:           make(map[string]bool),
+		authCh:             make(chan bool),
+		mw:                 &sync.RWMutex{},
+		commands:           make(map[string]struct{}),
+		ch:                 chanx.NewUnboundedChan[*Message](10),
+		MaxParallelMessage: maxParallel,
 	}
 	return client
 }
@@ -94,7 +103,7 @@ func (c *Client) Auth(login string, token string) error {
 	select {
 	case <-c.authCh:
 		break
-	case <-time.After(time.Second * 15):
+	case <-time.After(time.Second * 5):
 		return errors.New("auth error")
 	}
 	return nil
@@ -111,24 +120,27 @@ func (c *Client) checkCommand(msg *Message) {
 	}
 
 	if _, ok := c.commands[prefix]; ok {
-		c.commandsFuncs[prefix](commandMsg)
 	}
 }
 
 func (c *Client) OnPrivMsg(handle HandleFunc) {
-	c.onPrivMsg = handle
+	for i := 0; i < int(c.MaxParallelMessage); i++ {
+		go func() {
+			for msg := range c.ch.Out {
+				time.Sleep(time.Second * 3)
+				handle(msg)
+			}
+		}()
+	}
 }
 
 func (c *Client) OnPart(handle HandleFunc) {
-	c.onPart = handle
 }
 
 func (c *Client) OnJoin(handle HandleFunc) {
-	c.onJoin = handle
 }
 
 func (c *Client) OnConnected(handle HandleFunc) {
-	c.onConnected = handle
 }
 
 func (c *Client) Send(msg string) error {
@@ -143,13 +155,6 @@ func (c *Client) Send(msg string) error {
 
 func (c *Client) AddCommand(prefix string, handle HandleCommandFunc) {
 	c.commands[prefix] = struct{}{}
-	c.commandsFuncs[prefix] = handle
-}
-
-func (c *Client) OnCommand(prefix string, handle HandleCommandFunc) {
-	if fun, ok := c.commandsFuncs[prefix]; ok && fun != nil {
-		fun = handle
-	}
 }
 
 func (c *Client) Join(channels ...string) error {
@@ -196,34 +201,26 @@ func (c *Client) parseMessage(message string) {
 	msg := parse(message)
 	switch msg.Command["command"] {
 	case "PRIVMSG":
-		if c.onPrivMsg != nil {
-			start := time.Now()
-			c.onPrivMsg(msg)
-			fmt.Println(time.Since(start))
-		}
+		c.ch.In <- msg
 		if isCommand := strings.HasPrefix(msg.Parameters, "!"); isCommand {
 			c.checkCommand(msg)
 		}
 
 	case "CAP":
 		c.connected = true
-		if c.onConnected != nil {
-			c.onConnected(msg)
-		}
 	case "PING":
 		c.onPing(msg)
 	case "001":
 		c.authenticated = true
 		c.authCh <- true
+		fmt.Println("conectado")
 	case "JOIN":
 		channel := msg.Command["channel"].(string)
-		c.onJoin(msg)
 		c.mw.RLock()
 		c.channels[channel] = true
 		c.mw.RUnlock()
 	case "PART":
 		channel := msg.Command["channel"].(string)
-		c.onPart(msg)
 		c.mw.RLock()
 		delete(c.channels, channel)
 		c.mw.RUnlock()
@@ -248,30 +245,29 @@ func (c *Client) handleMessage() {
 }
 
 func main() {
-	client := NewClient()
+	client := NewClient(&ClientConfig{MaxParallelMessage: 3})
 	//Listen messages from IRC
 	client.OnPrivMsg(func(m *Message) {
 		fmt.Printf("%+v\n", m.Parameters)
 	})
-	client.OnConnected(func(m *Message) {
-		fmt.Println("finish connection")
-		// bytes, _ := json.Marshal(m)
-		// fmt.Println("connect")
-		// fmt.Println(string(bytes))
-	})
-	client.OnPart(func(m *Message) {
-		// fmt.Println("PART")
-		// fmt.Println(m)
-	})
-	client.OnJoin(func(m *Message) {
-		// fmt.Println("Join")
-		// fmt.Println(m)
-	})
+	// client.OnConnected(func(m *Message) {
+	// 	fmt.Println("finish connection")
+	// 	// bytes, _ := json.Marshal(m)
+	// 	// fmt.Println("connect")
+	// 	// fmt.Println(string(bytes))
+	// })
+	// client.OnPart(func(m *Message) {
+	// 	// fmt.Println("PART")
+	// 	// fmt.Println(m)
+	// })
+	// client.OnJoin(func(m *Message) {
+	// 	// fmt.Println("Join")
+	// 	// fmt.Println(m)
+	// })
 
-	client.AddCommand("comando1", func(m *CommandMessage) {
-		time.Sleep(time.Second * 5)
-		fmt.Printf("%+v\n", m)
-	})
+	// client.AddCommand("comando1", func(m *CommandMessage) {
+	// 	fmt.Printf("%+v\n", m)
+	// })
 
 	err := client.Auth("justinfan123456", "justinfan123456")
 	client.Join("sodapoppin", "jesusavgn")
