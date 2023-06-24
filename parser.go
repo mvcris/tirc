@@ -83,7 +83,9 @@ func parseCommand(raw string, msg *Message) {
 	case "001":
 		parsedCommand["command"] = commandParts[0]
 		parsedCommand["channel"] = commandParts[1]
-
+	case "376":
+		//Connected
+	case "353", "USERNOTICE":
 	}
 	msg.Command = parsedCommand
 }

@@ -208,7 +208,6 @@ func (c *Client) Part(channel string) error {
 
 func (c *Client) parseMessage(message string) {
 
-	//TODO: add msgs to a queue
 	msg := parse(message)
 	switch msg.Command["command"] {
 	case "PRIVMSG":
@@ -221,6 +220,8 @@ func (c *Client) parseMessage(message string) {
 		c.connected = true
 	case "PING":
 		c.onPing(msg)
+	case "376":
+		fmt.Println(msg)
 	case "001":
 		c.authenticated = true
 		c.authCh <- true
@@ -257,10 +258,9 @@ func (c *Client) handleMessage() {
 }
 
 func main() {
-	client := NewClient(&ClientConfig{MaxParallelMessage: 1})
+	client := NewClient(&ClientConfig{MaxParallelMessage: 5})
 	//Listen messages from IRC
 	client.OnPrivMsg(func(m *Message) {
-		time.Sleep(time.Second * 5)
 		fmt.Printf("%+v\n", m.Parameters)
 	})
 	// client.OnConnected(func(m *Message) {
@@ -282,12 +282,13 @@ func main() {
 		fmt.Printf("%+v\n", m)
 	})
 	client.AddCommand("comando2", func(m *CommandMessage) {
-		fmt.Printf("%+v\n", m)
+		client.Send("CAP REQ :twitch.tv/commands")
 	})
 
 	err := client.Auth("justinfan123456", "justinfan123456")
-	client.Join("sodapoppin", "jesusavgn")
+	client.Join("kaicenat", "yourragegaming")
 	client.Join("nulldemic")
+
 	if err != nil {
 		fmt.Println(err)
 		return
