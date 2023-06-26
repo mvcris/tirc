@@ -39,6 +39,7 @@ type Client struct {
 	authCh             chan bool
 	mw                 *sync.RWMutex
 	msgCh              *Channels
+	commandHandlers    map[string]HandleCommandFunc
 }
 
 type Channels struct {
@@ -56,14 +57,15 @@ func NewClient() *Client {
 		cmdCh:  chanx.NewUnboundedChan[*CommandMessage](10),
 	}
 	client := &Client{
-		connected:     false,
-		conn:          nil,
-		authenticated: false,
-		channels:      make(map[string]bool),
-		authCh:        make(chan bool),
-		mw:            &sync.RWMutex{},
-		commands:      make([]string, 0),
-		msgCh:         channels,
+		connected:       false,
+		conn:            nil,
+		authenticated:   false,
+		channels:        make(map[string]bool),
+		authCh:          make(chan bool),
+		mw:              &sync.RWMutex{},
+		commands:        make([]string, 0),
+		msgCh:           channels,
+		commandHandlers: make(map[string]HandleCommandFunc),
 	}
 	return client
 }
@@ -92,6 +94,7 @@ func (c *Client) Auth(login string, token string) error {
 	if err != nil {
 		return err
 	}
+
 	c.connected = true
 	//TODO: check error
 	err = c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
@@ -140,6 +143,21 @@ func (c *Client) OnPrivMsg(maxParallelMessage int, handle HandleFunc) {
 			}
 		}()
 	}
+}
+
+func (c *Client) AddCommand(command string, handler HandleCommandFunc) {
+	c.mw.Lock()
+	c.commands = append(c.commands, command)
+	c.commandHandlers[command] = handler
+	c.mw.Unlock()
+	fmt.Println(c.commandHandlers)
+	go func() {
+		for msg := range c.msgCh.cmdCh.Out {
+			if canHandle := c.IsValidCommand(msg); canHandle {
+				c.commandHandlers[msg.command](*msg)
+			}
+		}
+	}()
 }
 
 func (c *Client) OnPart(maxParallelMessage int, handle HandleFunc) {
@@ -303,30 +321,62 @@ func (c *Client) handleMessage() {
 
 func main() {
 	client := NewClient()
-
-	client.OnPrivMsg(1, func(m Message) {
-		// time.Sleep(time.Second * 10)
-		fmt.Printf("%+v\n", m.Parameters)
+	client.OnPrivMsg(50, func(m Message) {
+		// fmt.Println(m.Parameters)
 	})
 	client.OnPart(1, func(m Message) {
 		fmt.Println(m)
 	})
 	client.OnJoin(1, func(m Message) {
-		fmt.Println("Join")
 		fmt.Println(m)
 	})
 
-	commands := []string{"comando1", "comando2", "comando3"}
-	client.RegisterCommands(1, commands, func(m CommandMessage) {
-		fmt.Println(m.command)
+	client.AddCommand("comando1", func(msg CommandMessage) {
+		fmt.Println("comando 1")
 	})
+	client.AddCommand("comando2", func(msg CommandMessage) {
+		fmt.Println("comando 2")
+	})
+
 	err := client.Auth("justinfan123456", "justinfan123456")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	client.Join("frametamer666", "elraenn", "nulldemic")
+	client.Join(
+		"nulldemic",
+		"kaicenat",
+		"hasanabi",
+		"fanum",
+		"zordhacizco",
+		"jonvlogs",
+		"universoreality_live13",
+		"moistcr1tikal",
+		"pauleta_twitch",
+		"elzeein",
+		"rkdwl12",
+		"inecr7024",
+		"bakagaijinlive",
+		"laagusneta",
+		"bananirou",
+		"nihmune",
+		"thedaarick28",
+		"mym_alkapone",
+		"truenosurvivor",
+		"jinu6734",
+		"trielbaenre",
+		"mangel",
+		"meica05",
+		"mira",
+		"migi_tw",
+		"snuffy",
+		"ravshanbtw",
+		"holi_nosoysofi",
+		"manuuxo",
+		"yayahuz",
+		"sinder",
+	)
 
 	exit := make(chan bool)
 	<-exit
