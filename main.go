@@ -29,6 +29,12 @@ type Message struct {
 	Parameters string            `json:"parameters,omitempty"`
 }
 
+type ClientConfig struct {
+	nick      string
+	token     string
+	reconnect bool
+}
+
 type Client struct {
 	MaxParallelMessage int32
 	commands           []string
@@ -40,6 +46,7 @@ type Client struct {
 	mw                 *sync.RWMutex
 	msgCh              *Channels
 	commandHandlers    map[string]HandleCommandFunc
+	config             ClientConfig
 }
 
 type Channels struct {
@@ -49,13 +56,22 @@ type Channels struct {
 	cmdCh  *chanx.UnboundedChan[*CommandMessage]
 }
 
-func NewClient() *Client {
+func NewClient(config ClientConfig) (*Client, error) {
 	channels := &Channels{
 		privCh: chanx.NewUnboundedChan[*Message](10),
 		partCh: chanx.NewUnboundedChan[*Message](10),
 		joinCh: chanx.NewUnboundedChan[*Message](10),
 		cmdCh:  chanx.NewUnboundedChan[*CommandMessage](10),
 	}
+
+	if len(config.nick) <= 0 {
+		return nil, errors.New("nick not provided")
+	}
+
+	if len(config.token) <= 0 {
+		return nil, errors.New("token not provided")
+	}
+
 	client := &Client{
 		connected:       false,
 		conn:            nil,
@@ -66,8 +82,9 @@ func NewClient() *Client {
 		commands:        make([]string, 0),
 		msgCh:           channels,
 		commandHandlers: make(map[string]HandleCommandFunc),
+		config:          config,
 	}
-	return client
+	return client, nil
 }
 
 func Include(stack []string, find string) bool {
@@ -89,22 +106,19 @@ func (c *Client) Connect() error {
 	return nil
 }
 
-func (c *Client) Auth(login string, token string) error {
+func (c *Client) Start() error {
 	err := c.Connect()
 	if err != nil {
 		return err
 	}
-
 	c.connected = true
-	//TODO: check error
 	err = c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
-	err = c.Send(fmt.Sprintf("PASS oauth:%s\r\n", token))
-	err = c.Send(fmt.Sprintf("NICK %s\r\n", login))
+	err = c.Send(fmt.Sprintf("PASS oauth:%s\r\n", c.config.token))
+	err = c.Send(fmt.Sprintf("NICK %s\r\n", c.config.nick))
 	if err != nil {
 		return err
 	}
 	go c.handleMessage()
-	//TODO: Improve AUTH check
 	select {
 	case <-c.authCh:
 		close(c.authCh)
@@ -150,7 +164,6 @@ func (c *Client) AddCommand(command string, handler HandleCommandFunc) {
 	c.commands = append(c.commands, command)
 	c.commandHandlers[command] = handler
 	c.mw.Unlock()
-	fmt.Println(c.commandHandlers)
 	go func() {
 		for msg := range c.msgCh.cmdCh.Out {
 			if canHandle := c.IsValidCommand(msg); canHandle {
@@ -320,7 +333,11 @@ func (c *Client) handleMessage() {
 }
 
 func main() {
-	client := NewClient()
+	client, err := NewClient(ClientConfig{"justinfan123456", "justinfan123456", true})
+	if err != nil {
+		panic(err)
+	}
+
 	client.OnPrivMsg(50, func(m Message) {
 		// fmt.Println(m.Parameters)
 	})
@@ -338,7 +355,7 @@ func main() {
 		fmt.Println("comando 2")
 	})
 
-	err := client.Auth("justinfan123456", "justinfan123456")
+	err = client.Start()
 	if err != nil {
 		fmt.Println(err)
 		return
