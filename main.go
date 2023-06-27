@@ -149,14 +149,12 @@ func (c *Client) checkCommand(msg *Message) *CommandMessage {
 	return nil
 }
 
-func (c *Client) OnPrivMsg(maxParallelMessage int, handle HandleFunc) {
-	for i := 0; i < maxParallelMessage; i++ {
-		go func() {
-			for msg := range c.msgCh.privCh.Out {
-				handle(*msg)
-			}
-		}()
-	}
+func (c *Client) OnPrivMsg(handle HandleFunc) {
+	go func() {
+		for msg := range c.msgCh.privCh.Out {
+			handle(*msg)
+		}
+	}()
 }
 
 func (c *Client) AddCommand(command string, handler HandleCommandFunc) {
@@ -173,24 +171,20 @@ func (c *Client) AddCommand(command string, handler HandleCommandFunc) {
 	}()
 }
 
-func (c *Client) OnPart(maxParallelMessage int, handle HandleFunc) {
-	for i := 0; i < maxParallelMessage; i++ {
-		go func() {
-			for msg := range c.msgCh.partCh.Out {
-				handle(*msg)
-			}
-		}()
-	}
+func (c *Client) OnPart(handle HandleFunc) {
+	go func() {
+		for msg := range c.msgCh.partCh.Out {
+			handle(*msg)
+		}
+	}()
 }
 
-func (c *Client) OnJoin(maxParallelMessage int, handle HandleFunc) {
-	for i := 0; i < maxParallelMessage; i++ {
-		go func() {
-			for msg := range c.msgCh.joinCh.Out {
-				handle(*msg)
-			}
-		}()
-	}
+func (c *Client) OnJoin(handle HandleFunc) {
+	go func() {
+		for msg := range c.msgCh.joinCh.Out {
+			handle(*msg)
+		}
+	}()
 
 }
 
@@ -214,22 +208,6 @@ func (c *Client) IsValidCommand(msg *CommandMessage) bool {
 		}
 	}
 	return false
-}
-
-func (c *Client) RegisterCommands(maxParallelMessage int, commands []string, handle HandleCommandFunc) {
-	c.mw.Lock()
-	c.commands = commands
-	c.mw.Unlock()
-
-	for i := 0; i < maxParallelMessage; i++ {
-		go func() {
-			for msg := range c.msgCh.cmdCh.Out {
-				if canHandle := c.IsValidCommand(msg); canHandle {
-					handle(*msg)
-				}
-			}
-		}()
-	}
 }
 
 func CheckMessageCommand(command string, msg *Message) bool {
@@ -263,7 +241,7 @@ func (c *Client) CloseMessageChannels() {
 }
 
 func (c *Client) onPing(msg *Message) {
-	//TODO: PING RESPONSE ERROR??? MB RETRY CNNCT
+	//TODO: PING RESPONSE ERROR??? MB RETRYCNNCT
 	c.Send(fmt.Sprintf("PONG %s", msg.Parameters))
 	fmt.Println("PONG WORKS")
 }
@@ -338,13 +316,13 @@ func main() {
 		panic(err)
 	}
 
-	client.OnPrivMsg(50, func(m Message) {
-		// fmt.Println(m.Parameters)
+	client.OnPrivMsg(func(m Message) {
+		fmt.Println(m.Parameters)
 	})
-	client.OnPart(1, func(m Message) {
+	client.OnPart(func(m Message) {
 		fmt.Println(m)
 	})
-	client.OnJoin(1, func(m Message) {
+	client.OnJoin(func(m Message) {
 		fmt.Println(m)
 	})
 
