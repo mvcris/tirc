@@ -1,4 +1,4 @@
-package main
+package tirc
 
 import (
 	"bufio"
@@ -30,9 +30,9 @@ type Message struct {
 }
 
 type ClientConfig struct {
-	nick      string
-	token     string
-	reconnect bool
+	Nick      string
+	Token     string
+	Reconnect bool
 }
 
 type Client struct {
@@ -64,11 +64,11 @@ func NewClient(config ClientConfig) (*Client, error) {
 		cmdCh:  chanx.NewUnboundedChan[*CommandMessage](10),
 	}
 
-	if len(config.nick) <= 0 {
+	if len(config.Nick) <= 0 {
 		return nil, errors.New("nick not provided")
 	}
 
-	if len(config.token) <= 0 {
+	if len(config.Token) <= 0 {
 		return nil, errors.New("token not provided")
 	}
 
@@ -113,8 +113,8 @@ func (c *Client) Start() error {
 	}
 	c.connected = true
 	err = c.Send("CAP REQ :twitch.tv/commands twitch.tv/tags")
-	err = c.Send(fmt.Sprintf("PASS oauth:%s\r\n", c.config.token))
-	err = c.Send(fmt.Sprintf("NICK %s\r\n", c.config.nick))
+	err = c.Send(fmt.Sprintf("PASS oauth:%s\r\n", c.config.Token))
+	err = c.Send(fmt.Sprintf("NICK %s\r\n", c.config.Nick))
 	if err != nil {
 		return err
 	}
@@ -241,16 +241,13 @@ func (c *Client) CloseMessageChannels() {
 }
 
 func (c *Client) onPing(msg *Message) {
-	//TODO: PING RESPONSE ERROR??? MB RETRYCNNCT
 	c.Send(fmt.Sprintf("PONG %s", msg.Parameters))
-	fmt.Println("PONG WORKS")
 }
 
 func (c *Client) Part(channel string) error {
 	if c.connected {
 		c.mw.Lock()
 		defer c.mw.Unlock()
-		//TODO: check error
 		c.Send(fmt.Sprintf("PART #%s", channel))
 		delete(c.channels, fmt.Sprintf("#%s", channel))
 	}
@@ -272,8 +269,6 @@ func (c *Client) parseMessage(message string) {
 		c.connected = true
 	case "PING":
 		c.onPing(msg)
-	case "376":
-		fmt.Println(msg)
 	case "001":
 		c.authenticated = true
 		c.authCh <- true
@@ -308,71 +303,4 @@ func (c *Client) handleMessage() {
 			c.parseMessage(msg)
 		}
 	}
-}
-
-func main() {
-	client, err := NewClient(ClientConfig{"justinfan123456", "justinfan123456", true})
-	if err != nil {
-		panic(err)
-	}
-
-	client.OnPrivMsg(func(m Message) {
-		fmt.Println(m.Parameters)
-	})
-	client.OnPart(func(m Message) {
-		fmt.Println(m)
-	})
-	client.OnJoin(func(m Message) {
-		fmt.Println(m)
-	})
-
-	client.AddCommand("comando1", func(msg CommandMessage) {
-		fmt.Println("comando 1")
-	})
-	client.AddCommand("comando2", func(msg CommandMessage) {
-		fmt.Println("comando 2")
-	})
-
-	err = client.Start()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	client.Join(
-		"nulldemic",
-		"kaicenat",
-		"hasanabi",
-		"fanum",
-		"zordhacizco",
-		"jonvlogs",
-		"universoreality_live13",
-		"moistcr1tikal",
-		"pauleta_twitch",
-		"elzeein",
-		"rkdwl12",
-		"inecr7024",
-		"bakagaijinlive",
-		"laagusneta",
-		"bananirou",
-		"nihmune",
-		"thedaarick28",
-		"mym_alkapone",
-		"truenosurvivor",
-		"jinu6734",
-		"trielbaenre",
-		"mangel",
-		"meica05",
-		"mira",
-		"migi_tw",
-		"snuffy",
-		"ravshanbtw",
-		"holi_nosoysofi",
-		"manuuxo",
-		"yayahuz",
-		"sinder",
-	)
-
-	exit := make(chan bool)
-	<-exit
 }
