@@ -11,23 +11,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	client.OnPrivMsg(func(m tirc.Message) {
-		// fmt.Println(m.Parameters)
-	})
-	client.OnPart(func(m tirc.Message) {
-		fmt.Println(m)
-	})
-	client.OnJoin(func(m tirc.Message) {
-		fmt.Println(m)
-	})
-
 	err = client.Start()
+
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
 	client.Join(
 		"nulldemic",
 		"kaicenat",
@@ -61,7 +50,16 @@ func main() {
 		"yayahuz",
 		"sinder",
 	)
+	client.OnPrivMsg(func(m tirc.Message) {
+		fmt.Println(m.Parameters)
+	})
+	client.OnPart(func(m tirc.Message) {
+		fmt.Println(m)
+	})
+	client.OnJoin(func(m tirc.Message) {
+		fmt.Println(m)
+	})
 
-	exit := make(chan bool)
-	<-exit
+	err = client.Watch()
+
 }

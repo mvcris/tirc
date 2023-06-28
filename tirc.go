@@ -2,6 +2,7 @@ package tirc
 
 import (
 	"bufio"
+	"context"
 	"crypto/tls"
 	"errors"
 	"fmt"
@@ -47,6 +48,9 @@ type Client struct {
 	msgCh              *Channels
 	commandHandlers    map[string]HandleCommandFunc
 	config             ClientConfig
+	ticker             *time.Ticker
+	ctx                context.Context
+	cancel             context.CancelFunc
 }
 
 type Channels struct {
@@ -71,6 +75,7 @@ func NewClient(config ClientConfig) (*Client, error) {
 	if len(config.Token) <= 0 {
 		return nil, errors.New("token not provided")
 	}
+	ctx, cancel := context.WithCancel(context.Background())
 
 	client := &Client{
 		connected:       false,
@@ -83,6 +88,9 @@ func NewClient(config ClientConfig) (*Client, error) {
 		msgCh:           channels,
 		commandHandlers: make(map[string]HandleCommandFunc),
 		config:          config,
+		ticker:          time.NewTicker(time.Second * 5),
+		ctx:             ctx,
+		cancel:          cancel,
 	}
 	return client, nil
 }
@@ -118,16 +126,23 @@ func (c *Client) Start() error {
 	if err != nil {
 		return err
 	}
-	go c.handleMessage()
-	select {
-	case <-c.authCh:
-		close(c.authCh)
-		break
-	case <-time.After(time.Second * 5):
-		close(c.authCh)
-		return errors.New("auth error")
-	}
 	return nil
+}
+
+func (c *Client) checkConnection() {
+Loop:
+	for {
+		select {
+		case <-c.ticker.C:
+			err := c.Send("PING :tmi.twitch.tv")
+			if err != nil {
+				c.ticker.Stop()
+				c.cancel()
+			}
+		case <-c.ctx.Done():
+			break Loop
+		}
+	}
 }
 
 func (c *Client) checkCommand(msg *Message) *CommandMessage {
@@ -284,6 +299,25 @@ func (c *Client) parseMessage(message string) {
 		delete(c.channels, channel)
 		c.mw.RUnlock()
 		c.msgCh.partCh.In <- msg
+	}
+}
+
+func (c *Client) Watch() error {
+	go c.handleMessage()
+	go c.checkConnection()
+	select {
+	case <-c.authCh:
+		close(c.authCh)
+		break
+	case <-time.After(time.Second * 5):
+		close(c.authCh)
+		return errors.New("auth error")
+	}
+	// return nil
+
+	select {
+	case <-c.ctx.Done():
+		return errors.New("something wrong =(")
 	}
 }
 
