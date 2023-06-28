@@ -37,27 +37,23 @@ type ClientConfig struct {
 }
 
 type Client struct {
-	MaxParallelMessage int32
-	commands           []string
-	connected          bool
-	conn               *tls.Conn
-	channels           map[string]bool
-	authenticated      bool
-	authCh             chan bool
-	mw                 *sync.RWMutex
-	msgCh              *Channels
-	commandHandlers    map[string]HandleCommandFunc
-	config             ClientConfig
-	ticker             *time.Ticker
-	ctx                context.Context
-	cancel             context.CancelFunc
+	connected     bool
+	conn          *tls.Conn
+	channels      map[string]bool
+	authenticated bool
+	authCh        chan bool
+	mu            *sync.RWMutex
+	msgCh         *Channels
+	config        ClientConfig
+	ticker        *time.Ticker
+	ctx           context.Context
+	cancel        context.CancelFunc
 }
 
 type Channels struct {
 	privCh *chanx.UnboundedChan[*Message]
 	partCh *chanx.UnboundedChan[*Message]
 	joinCh *chanx.UnboundedChan[*Message]
-	cmdCh  *chanx.UnboundedChan[*CommandMessage]
 }
 
 func NewClient(config ClientConfig) (*Client, error) {
@@ -65,7 +61,6 @@ func NewClient(config ClientConfig) (*Client, error) {
 		privCh: chanx.NewUnboundedChan[*Message](10),
 		partCh: chanx.NewUnboundedChan[*Message](10),
 		joinCh: chanx.NewUnboundedChan[*Message](10),
-		cmdCh:  chanx.NewUnboundedChan[*CommandMessage](10),
 	}
 
 	if len(config.Nick) <= 0 {
@@ -78,19 +73,17 @@ func NewClient(config ClientConfig) (*Client, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	client := &Client{
-		connected:       false,
-		conn:            nil,
-		authenticated:   false,
-		channels:        make(map[string]bool),
-		authCh:          make(chan bool),
-		mw:              &sync.RWMutex{},
-		commands:        make([]string, 0),
-		msgCh:           channels,
-		commandHandlers: make(map[string]HandleCommandFunc),
-		config:          config,
-		ticker:          time.NewTicker(time.Second * 5),
-		ctx:             ctx,
-		cancel:          cancel,
+		connected:     false,
+		conn:          nil,
+		authenticated: false,
+		channels:      make(map[string]bool),
+		authCh:        make(chan bool),
+		mu:            &sync.RWMutex{},
+		msgCh:         channels,
+		config:        config,
+		ticker:        time.NewTicker(time.Second * 5),
+		ctx:           ctx,
+		cancel:        cancel,
 	}
 	err := client.start()
 	if err != nil {
@@ -149,43 +142,10 @@ Loop:
 	}
 }
 
-func (c *Client) checkCommand(msg *Message) *CommandMessage {
-	prefix := strings.Replace(msg.Parameters, "!", "", 1)
-	commandMsg := &CommandMessage{msg, prefix, ""}
-
-	if key := strings.Index(msg.Parameters, " "); key != -1 {
-		prefix = msg.Parameters[1:key]
-		commandMsg.source = strings.Replace(msg.Parameters[key:], " ", "", 1)
-		commandMsg.command = prefix
-	}
-
-	for _, command := range c.commands {
-		if command == prefix {
-			return commandMsg
-		}
-	}
-
-	return nil
-}
-
 func (c *Client) OnPrivMsg(handle HandleFunc) {
 	go func() {
 		for msg := range c.msgCh.privCh.Out {
 			handle(*msg)
-		}
-	}()
-}
-
-func (c *Client) AddCommand(command string, handler HandleCommandFunc) {
-	c.mw.Lock()
-	c.commands = append(c.commands, command)
-	c.commandHandlers[command] = handler
-	c.mw.Unlock()
-	go func() {
-		for msg := range c.msgCh.cmdCh.Out {
-			if canHandle := c.isValidCommand(msg); canHandle {
-				c.commandHandlers[msg.command](*msg)
-			}
 		}
 	}()
 }
@@ -220,26 +180,10 @@ func (c *Client) Send(msg string) error {
 	return nil
 }
 
-func (c *Client) isValidCommand(msg *CommandMessage) bool {
-	for _, command := range c.commands {
-		if msg.command == command {
-			return true
-		}
-	}
-	return false
-}
-
-func checkMessageCommand(command string, msg *Message) bool {
-	if msg.Command["command"] == command {
-		return true
-	}
-	return false
-}
-
 func (c *Client) Join(channels ...string) error {
 	if c.connected {
-		c.mw.Lock()
-		defer c.mw.Unlock()
+		c.mu.Lock()
+		defer c.mu.Unlock()
 		for _, channel := range channels {
 			err := c.Send(fmt.Sprintf("JOIN #%s", channel))
 			if err != nil {
@@ -265,8 +209,8 @@ func (c *Client) onPing(msg *Message) {
 
 func (c *Client) Part(channel string) error {
 	if c.connected {
-		c.mw.Lock()
-		defer c.mw.Unlock()
+		c.mu.Lock()
+		defer c.mu.Unlock()
 		c.Send(fmt.Sprintf("PART #%s", channel))
 		delete(c.channels, fmt.Sprintf("#%s", channel))
 	}
@@ -278,11 +222,6 @@ func (c *Client) parseMessage(message string) {
 	msg := parse(message)
 	switch msg.Command["command"] {
 	case "PRIVMSG":
-		if isCommand := strings.HasPrefix(msg.Parameters, "!"); isCommand {
-			if cmdMsg := c.checkCommand(msg); cmdMsg != nil {
-				c.msgCh.cmdCh.In <- cmdMsg
-			}
-		}
 		c.msgCh.privCh.In <- msg
 	case "CAP":
 		c.connected = true
@@ -293,15 +232,15 @@ func (c *Client) parseMessage(message string) {
 		c.authCh <- true
 	case "JOIN":
 		channel := msg.Command["channel"].(string)
-		c.mw.RLock()
+		c.mu.RLock()
 		c.channels[channel] = true
-		c.mw.RUnlock()
+		c.mu.RUnlock()
 		c.msgCh.joinCh.In <- msg
 	case "PART":
 		channel := msg.Command["channel"].(string)
-		c.mw.RLock()
+		c.mu.RLock()
 		delete(c.channels, channel)
-		c.mw.RUnlock()
+		c.mu.RUnlock()
 		c.msgCh.partCh.In <- msg
 	}
 }
@@ -331,7 +270,6 @@ func (c *Client) handleMessage() {
 	for {
 		raw, err := r.ReadLine()
 		if err != nil {
-			fmt.Println(err)
 			break
 		}
 		messages := strings.Split(raw, "\r\n")
