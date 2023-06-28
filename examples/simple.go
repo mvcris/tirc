@@ -11,12 +11,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = client.Start()
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 	client.Join(
 		"nulldemic",
 		"kaicenat",
@@ -60,6 +55,6 @@ func main() {
 		fmt.Println(m)
 	})
 
-	err = client.Watch()
+	err = client.Run()
 
 }

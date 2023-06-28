@@ -92,6 +92,10 @@ func NewClient(config ClientConfig) (*Client, error) {
 		ctx:             ctx,
 		cancel:          cancel,
 	}
+	err := client.start()
+	if err != nil {
+		return nil, err
+	}
 	return client, nil
 }
 
@@ -114,7 +118,7 @@ func (c *Client) Connect() error {
 	return nil
 }
 
-func (c *Client) Start() error {
+func (c *Client) start() error {
 	err := c.Connect()
 	if err != nil {
 		return err
@@ -179,7 +183,7 @@ func (c *Client) AddCommand(command string, handler HandleCommandFunc) {
 	c.mw.Unlock()
 	go func() {
 		for msg := range c.msgCh.cmdCh.Out {
-			if canHandle := c.IsValidCommand(msg); canHandle {
+			if canHandle := c.isValidCommand(msg); canHandle {
 				c.commandHandlers[msg.command](*msg)
 			}
 		}
@@ -216,7 +220,7 @@ func (c *Client) Send(msg string) error {
 	return nil
 }
 
-func (c *Client) IsValidCommand(msg *CommandMessage) bool {
+func (c *Client) isValidCommand(msg *CommandMessage) bool {
 	for _, command := range c.commands {
 		if msg.command == command {
 			return true
@@ -225,7 +229,7 @@ func (c *Client) IsValidCommand(msg *CommandMessage) bool {
 	return false
 }
 
-func CheckMessageCommand(command string, msg *Message) bool {
+func checkMessageCommand(command string, msg *Message) bool {
 	if msg.Command["command"] == command {
 		return true
 	}
@@ -249,7 +253,7 @@ func (c *Client) Join(channels ...string) error {
 	return errors.New("not connected")
 }
 
-func (c *Client) CloseMessageChannels() {
+func (c *Client) closeMessageChannels() {
 	close(c.msgCh.partCh.In)
 	close(c.msgCh.privCh.In)
 	close(c.msgCh.joinCh.In)
@@ -302,7 +306,7 @@ func (c *Client) parseMessage(message string) {
 	}
 }
 
-func (c *Client) Watch() error {
+func (c *Client) Run() error {
 	go c.handleMessage()
 	go c.checkConnection()
 	select {
@@ -313,7 +317,6 @@ func (c *Client) Watch() error {
 		close(c.authCh)
 		return errors.New("auth error")
 	}
-	// return nil
 
 	select {
 	case <-c.ctx.Done():
@@ -323,7 +326,7 @@ func (c *Client) Watch() error {
 
 func (c *Client) handleMessage() {
 	defer c.conn.Close()
-	defer c.CloseMessageChannels()
+	defer c.closeMessageChannels()
 	r := textproto.NewReader(bufio.NewReader(c.conn))
 	for {
 		raw, err := r.ReadLine()
