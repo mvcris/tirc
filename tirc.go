@@ -15,13 +15,6 @@ import (
 )
 
 type HandleFunc func(msg Message)
-type HandleCommandFunc func(msg CommandMessage)
-
-type CommandMessage struct {
-	msg     *Message
-	command string
-	source  string
-}
 
 type Message struct {
 	Tags       map[string]any    `json:"tags,omitempty"`
